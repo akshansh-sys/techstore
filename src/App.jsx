@@ -12,6 +12,7 @@ import Toast from './components/Toast';
 import ConfirmModal from './components/ConfirmModal';
 import LoginPage from './components/LoginPage';
 import NotFound from './components/NotFound';
+import KageExperience from './components/KageExperience';
 
 import {
   getProducts,
@@ -31,8 +32,9 @@ import { getLocalUser, logoutUser } from './services/supabaseClient';
 export default function App() {
   // Authentication State
   const [currentUser, setCurrentUser] = useState(() => getLocalUser());
+  const [isGuestExploring, setIsGuestExploring] = useState(false);
 
-  // Navigation: 'dashboard' | 'products' | 'billing' | 'udhaar'
+  // Navigation: 'dashboard' | 'products' | 'billing' | 'udhaar' | 'experience'
   const [activeSection, setActiveSection] = useState('dashboard');
 
   // Application Data States
@@ -71,6 +73,22 @@ export default function App() {
     setProducts(loadedProducts);
     setCustomers(loadedCustomers);
     setDashboardStats(stats);
+  }, []);
+
+  // Global keyboard shortcuts [1]-[5]
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+        return;
+      }
+      if (e.key === '1') setActiveSection('dashboard');
+      else if (e.key === '2') setActiveSection('products');
+      else if (e.key === '3') setActiveSection('billing');
+      else if (e.key === '4') setActiveSection('udhaar');
+      else if (e.key === '5') setActiveSection('experience');
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   // Initial load on component mount
@@ -141,18 +159,43 @@ export default function App() {
     showToast('All stored records cleared.', 'info');
   };
 
-  // If user is not authenticated, show Login & Registration Page
+  // If user is not authenticated, show Login & Registration Page or Guest 3D Experience
   if (!currentUser) {
+    if (isGuestExploring) {
+      return (
+        <KageExperience
+          onBack={() => setIsGuestExploring(false)}
+          onNavigate={(sec) => {
+            setIsGuestExploring(false);
+            setActiveSection(sec);
+          }}
+        />
+      );
+    }
+
     return (
       <>
-        <LoginPage onLoginSuccess={handleLoginSuccess} />
+        <LoginPage
+          onLoginSuccess={handleLoginSuccess}
+          onExploreExperience={() => setIsGuestExploring(true)}
+        />
         <Toast toast={toast} onClose={() => setToast(null)} />
       </>
     );
   }
 
   // Check if valid section is selected
-  const isValidSection = ['dashboard', 'products', 'billing', 'udhaar'].includes(activeSection);
+  const isValidSection = ['dashboard', 'products', 'billing', 'udhaar', 'experience'].includes(activeSection);
+
+  // If in full 3D experience mode
+  if (activeSection === 'experience') {
+    return (
+      <KageExperience
+        onBack={() => setActiveSection('dashboard')}
+        onNavigate={(sec) => setActiveSection(sec)}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col text-slate-800">

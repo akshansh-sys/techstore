@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Package, ShoppingCart, Users } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Users, Sparkles } from 'lucide-react';
 
 export default function MobileNav({ activeSection, onSelectSection }) {
   const navItems = [
@@ -7,6 +7,7 @@ export default function MobileNav({ activeSection, onSelectSection }) {
     { id: 'products', name: 'Products', icon: Package },
     { id: 'billing', name: 'Billing', icon: ShoppingCart },
     { id: 'udhaar', name: 'Udhaar', icon: Users },
+    { id: 'experience', name: '3D World', icon: Sparkles },
   ];
 
   return (

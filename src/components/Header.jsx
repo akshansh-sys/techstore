@@ -7,6 +7,7 @@ import {
   Mail,
   Phone,
   Circle,
+  Sparkles,
 } from 'lucide-react';
 import { getShopProfile } from '../services/dataService';
 
@@ -107,6 +108,17 @@ export default function Header({
             <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
             <span className="font-mono font-medium tracking-tight">{timeString || 'IST'}</span>
           </div>
+
+          {/* 3D Temple Experience Button */}
+          <button
+            type="button"
+            onClick={() => onNavigate && onNavigate('experience')}
+            title="Explore 3D Kage Temple Experience"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-amber-900 bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 border border-amber-200/80 rounded-lg transition-all shadow-2xs hover:shadow-xs active:scale-95"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+            <span className="hidden sm:inline">3D World</span>
+          </button>
 
           {/* Reset / Clear Data Button */}
           <button

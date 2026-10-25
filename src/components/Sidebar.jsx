@@ -8,13 +8,14 @@ import {
   Mail,
   ShieldCheck,
   ChevronRight,
+  Sparkles,
 } from 'lucide-react';
 import { getShopProfile } from '../services/dataService';
 
 export default function Sidebar({ activeSection, onSelectSection }) {
   const shop = getShopProfile();
 
-  // Exactly the 4 required sections with numeric shortcut hints
+  // Navigation sections with numeric shortcut hints
   const navItems = [
     {
       id: 'dashboard',
@@ -43,6 +44,13 @@ export default function Sidebar({ activeSection, onSelectSection }) {
       icon: Users,
       description: 'Credit Ledger & Passbook',
       shortcut: '4',
+    },
+    {
+      id: 'experience',
+      name: '3D World',
+      icon: Sparkles,
+      description: 'Kage Temple Experience',
+      shortcut: '5',
     },
   ];
 

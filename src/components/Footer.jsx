@@ -74,6 +74,15 @@ export default function Footer({ onNavigate, currentUser }) {
                   Customer Udhaar Ledger
                 </button>
               </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('experience')}
+                  className="hover:text-emerald-700 transition font-medium text-emerald-800"
+                >
+                  3D Temple Experience ✨
+                </button>
+              </li>
             </ul>
           </div>
 

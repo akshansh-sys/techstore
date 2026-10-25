@@ -13,6 +13,7 @@ import {
   ArrowLeft,
   RotateCcw,
   Edit2,
+  Sparkles,
 } from 'lucide-react';
 import {
   loginWithEmail,
@@ -21,7 +22,7 @@ import {
   resendSignUpOtp,
 } from '../services/supabaseClient';
 
-export default function LoginPage({ onLoginSuccess }) {
+export default function LoginPage({ onLoginSuccess, onExploreExperience }) {
   // Mode: 'login' | 'register' | 'otp'
   const [authMode, setAuthMode] = useState('login');
 
@@ -475,6 +476,20 @@ export default function LoginPage({ onLoginSuccess }) {
             </div>
           )}
         </div>
+
+        {/* Explore 3D Experience Demo */}
+        {onExploreExperience && (
+          <div className="mt-4 text-center">
+            <button
+              type="button"
+              onClick={onExploreExperience}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 hover:bg-white text-slate-700 hover:text-slate-900 font-semibold text-xs rounded-xl shadow-xs border border-slate-200/80 transition active:scale-95"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              <span>Explore 3D Temple Experience</span>
+            </button>
+          </div>
+        )}
 
         {/* Clean Footer Note */}
         <p className="text-center text-xs text-slate-400 mt-4">
