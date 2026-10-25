@@ -6,8 +6,8 @@ export default function NotFound({ onNavigate }) {
   const shop = getShopProfile();
 
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center p-4 text-center">
-      <div className="bg-white rounded-3xl p-8 sm:p-12 max-w-lg w-full border border-slate-200 shadow-xl space-y-6">
+    <div className="min-h-[70vh] flex flex-col items-center justify-center p-4 text-center animate-fade-in">
+      <div className="bg-white rounded-3xl p-8 sm:p-12 max-w-lg w-full border border-slate-200/80 shadow-2xl shadow-slate-200/60 space-y-6 animate-scale-up">
         {/* Visual 404 Illustration */}
         <div className="relative inline-block">
           <div className="w-24 h-24 rounded-3xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto shadow-inner border border-emerald-100">

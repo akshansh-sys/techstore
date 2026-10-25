@@ -8,25 +8,25 @@ export default function Toast({ toast, onClose }) {
   const isError = toast.type === 'error';
 
   return (
-    <div className="fixed bottom-20 md:bottom-6 right-6 z-50 max-w-sm animate-fade-in shadow-xl">
+    <div className="fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-50 max-w-sm w-[calc(100vw-2rem)] sm:w-auto animate-slide-up shadow-xl shadow-slate-900/10">
       <div
-        className={`flex items-start gap-3 p-4 rounded-xl border ${
+        className={`flex items-start gap-3 p-4 rounded-2xl border backdrop-blur-md ${
           isSuccess
-            ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+            ? 'bg-emerald-50/95 border-emerald-200 text-emerald-950 shadow-emerald-500/10'
             : isError
-            ? 'bg-rose-50 border-rose-300 text-rose-900'
-            : 'bg-blue-50 border-blue-300 text-blue-900'
+            ? 'bg-rose-50/95 border-rose-200 text-rose-950 shadow-rose-500/10'
+            : 'bg-slate-900/95 border-slate-800 text-white shadow-slate-900/20'
         }`}
       >
         <div className="mt-0.5 flex-shrink-0">
           {isSuccess && <CheckCircle2 className="w-5 h-5 text-emerald-600" />}
           {isError && <AlertCircle className="w-5 h-5 text-rose-600" />}
-          {!isSuccess && !isError && <Info className="w-5 h-5 text-blue-600" />}
+          {!isSuccess && !isError && <Info className="w-5 h-5 text-slate-300" />}
         </div>
-        <div className="flex-1 text-sm font-medium">{toast.message}</div>
+        <div className="flex-1 text-xs sm:text-sm font-semibold leading-snug">{toast.message}</div>
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-slate-700 p-0.5 rounded-lg"
+          className="text-slate-400 hover:text-slate-700 p-0.5 rounded-lg transition"
           aria-label="Close notification"
         >
           <X className="w-4 h-4" />

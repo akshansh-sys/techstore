@@ -173,8 +173,8 @@ export default function Footer({ onNavigate, currentUser }) {
 
       {/* Privacy Policy Modal */}
       {activeModal === 'privacy' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200/80 animate-scale-up">
             <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
               <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
@@ -183,7 +183,7 @@ export default function Footer({ onNavigate, currentUser }) {
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg"
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg transition"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -203,7 +203,7 @@ export default function Footer({ onNavigate, currentUser }) {
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs"
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-semibold rounded-xl text-xs transition shadow-sm"
               >
                 Got It
               </button>
@@ -214,8 +214,8 @@ export default function Footer({ onNavigate, currentUser }) {
 
       {/* POS Help Modal */}
       {activeModal === 'help' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200/80 animate-scale-up">
             <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
               <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
                 <HelpCircle className="w-4 h-4 text-emerald-600" />
@@ -224,7 +224,7 @@ export default function Footer({ onNavigate, currentUser }) {
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg"
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg transition"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -239,7 +239,7 @@ export default function Footer({ onNavigate, currentUser }) {
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs"
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-semibold rounded-xl text-xs transition shadow-sm"
               >
                 Close Guide
               </button>

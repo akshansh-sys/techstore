@@ -152,24 +152,28 @@ export default function LoginPage({ onLoginSuccess }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col justify-center items-center p-4">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen bg-slate-50 relative overflow-hidden flex flex-col justify-center items-center p-4 selection:bg-emerald-100 selection:text-emerald-900">
+      {/* Subtle ambient lighting meshes */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[320px] bg-gradient-to-b from-emerald-100/60 to-transparent blur-3xl pointer-events-none rounded-full" />
+      <div className="absolute bottom-0 right-0 w-[400px] h-[300px] bg-gradient-to-tl from-teal-100/40 to-transparent blur-3xl pointer-events-none rounded-full" />
+
+      <div className="max-w-md w-full relative z-10 animate-fade-in">
         {/* Brand Header: TechStore */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-600 text-white shadow-lg shadow-emerald-200 mb-3">
-            <Store className="w-8 h-8" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-lg shadow-emerald-600/20 ring-4 ring-emerald-50 mb-3 group hover:scale-105 transition-transform duration-300">
+            <Store className="w-7 h-7" />
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight">TechStore</h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Retail & Kirana Store Management System
+          <p className="text-xs text-slate-500 mt-1 font-medium">
+            Next-Gen Retail & Kirana Store Management System
           </p>
         </div>
 
         {/* Main Card */}
-        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-200">
+        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-xl shadow-slate-200/60 border border-slate-200/80 backdrop-blur-xs">
           {/* Top Switcher: Owner Login vs Create Account */}
           {authMode !== 'otp' && (
-            <div className="flex bg-slate-100 p-1 rounded-xl mb-6">
+            <div className="flex bg-slate-100/80 p-1 rounded-xl mb-6 border border-slate-200/50">
               <button
                 type="button"
                 onClick={() => {
@@ -177,9 +181,9 @@ export default function LoginPage({ onLoginSuccess }) {
                   setErrorMsg('');
                   setSuccessMsg('');
                 }}
-                className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
+                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all duration-200 ${
                   authMode === 'login'
-                    ? 'bg-white text-slate-900 shadow-xs'
+                    ? 'bg-white text-slate-900 shadow-sm'
                     : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
@@ -192,9 +196,9 @@ export default function LoginPage({ onLoginSuccess }) {
                   setErrorMsg('');
                   setSuccessMsg('');
                 }}
-                className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
+                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all duration-200 ${
                   authMode === 'register'
-                    ? 'bg-white text-slate-900 shadow-xs'
+                    ? 'bg-white text-slate-900 shadow-sm'
                     : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
@@ -236,7 +240,7 @@ export default function LoginPage({ onLoginSuccess }) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="owner@techstore.in"
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:border-emerald-500"
+                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/15 transition-all"
                   />
                 </div>
               </div>
@@ -254,12 +258,12 @@ export default function LoginPage({ onLoginSuccess }) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:border-emerald-500"
+                    className="w-full pl-9 pr-10 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/15 transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -270,7 +274,7 @@ export default function LoginPage({ onLoginSuccess }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white font-bold text-sm rounded-xl transition shadow-md flex items-center justify-center gap-2 mt-2"
+                className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl transition-all shadow-md shadow-emerald-600/20 hover:shadow-lg hover:shadow-emerald-600/25 flex items-center justify-center gap-2 mt-2"
               >
                 {loading ? (
                   <span>Signing In...</span>
@@ -301,7 +305,7 @@ export default function LoginPage({ onLoginSuccess }) {
                     value={shopName}
                     onChange={(e) => setShopName(e.target.value)}
                     placeholder="e.g. Sharma General Store"
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:border-emerald-500"
+                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/15 transition-all"
                   />
                 </div>
               </div>
@@ -319,7 +323,7 @@ export default function LoginPage({ onLoginSuccess }) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="owner@techstore.in"
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:border-emerald-500"
+                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/15 transition-all"
                   />
                 </div>
               </div>
@@ -338,12 +342,12 @@ export default function LoginPage({ onLoginSuccess }) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:border-emerald-500"
+                    className="w-full pl-9 pr-10 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/15 transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -355,7 +359,7 @@ export default function LoginPage({ onLoginSuccess }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white font-bold text-sm rounded-xl transition shadow-md flex items-center justify-center gap-2 mt-2"
+                className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl transition-all shadow-md shadow-emerald-600/20 hover:shadow-lg hover:shadow-emerald-600/25 flex items-center justify-center gap-2 mt-2"
               >
                 {loading ? (
                   <span>Creating Account...</span>
@@ -424,7 +428,7 @@ export default function LoginPage({ onLoginSuccess }) {
                 <button
                   type="submit"
                   disabled={loading || otpCode.length !== 6}
-                  className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl transition shadow-md flex items-center justify-center gap-2"
+                  className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl transition-all shadow-md shadow-emerald-600/20 hover:shadow-lg flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <span>Verifying Code...</span>

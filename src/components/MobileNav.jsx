@@ -10,7 +10,10 @@ export default function MobileNav({ activeSection, onSelectSection }) {
   ];
 
   return (
-    <nav className="no-print md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 px-2 py-1 shadow-lg">
+    <nav
+      className="no-print md:hidden fixed bottom-3 left-3 right-3 bg-white/95 backdrop-blur-lg border border-slate-200/90 rounded-2xl z-40 px-2 py-1.5 shadow-[0_4px_20px_rgba(15,23,42,0.12)] transition-all"
+      aria-label="Mobile Bottom Navigation"
+    >
       <div className="flex justify-around items-center">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -20,20 +23,24 @@ export default function MobileNav({ activeSection, onSelectSection }) {
             <button
               key={item.id}
               onClick={() => onSelectSection(item.id)}
-              className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition ${
+              className={`flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all duration-150 active:scale-95 ${
                 isActive
                   ? 'text-emerald-700 font-bold'
                   : 'text-slate-500 hover:text-slate-800 font-medium'
               }`}
             >
               <div
-                className={`p-1 rounded-lg ${
-                  isActive ? 'bg-emerald-100 text-emerald-700' : 'text-slate-500'
+                className={`p-1.5 rounded-xl transition-all duration-150 ${
+                  isActive
+                    ? 'bg-emerald-100/90 text-emerald-800 scale-105 shadow-2xs'
+                    : 'text-slate-500 hover:bg-slate-100'
                 }`}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
-              <span className="text-[11px] mt-0.5">{item.name}</span>
+              <span className={`text-[10px] mt-0.5 tracking-tight ${isActive ? 'font-bold' : 'font-normal'}`}>
+                {item.name}
+              </span>
             </button>
           );
         })}
