@@ -147,17 +147,18 @@ export default function CustomerUdhaar({
   return (
     <div className="space-y-6 animate-fade-in text-[#dfe7e0]">
       {/* Title & Add Customer Button */}
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#dfe7e0] uppercase">
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#dfe7e0] uppercase">
               Customer Udhaar
             </h2>
-            <span className="text-xs font-mono font-bold bg-white/[0.06] text-[#dfe7e0] px-2.5 py-0.5 rounded-full border border-white/10">
+            <span className="text-xs sm:text-sm font-mono font-bold bg-white/[0.06] text-[#dfe7e0] px-3 py-0.5 rounded-full border border-white/10">
               {customers.length} Accounts
             </span>
           </div>
-          <p className="text-xs text-[#78837c] font-mono mt-1">
+          <p className="text-sm text-[#78837c] font-mono mt-1">
             Track customer credit balances, record repayments, and view passbook audit logs
           </p>
         </div>
@@ -168,7 +169,7 @@ export default function CustomerUdhaar({
             setCustomerFormError('');
             setIsAddCustomerOpen(true);
           }}
-          className="inline-flex items-center justify-center gap-2 px-5 py-3 btn-vermilion font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg active:scale-95 shrink-0"
+          className="inline-flex items-center justify-center gap-2 px-5 py-3 btn-vermilion font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl shadow-lg active:scale-95 shrink-0"
         >
           <UserPlus className="w-4 h-4" />
           <span>Add New Account</span>
@@ -177,21 +178,21 @@ export default function CustomerUdhaar({
 
       {/* Udhaar KPI Banner */}
       <div className="kage-card p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#78837c] block">
+        <div className="space-y-1.5">
+          <span className="text-xs font-mono uppercase tracking-[0.15em] text-[#78837c] block font-semibold">
             Total Outstanding Market Udhaar
           </span>
-          <div className="text-2xl sm:text-3xl font-bold text-[#c9a24a] font-mono tracking-tight drop-shadow-sm">
+          <div className="text-3xl sm:text-4xl font-black text-[#c9a24a] font-mono tracking-tight drop-shadow-sm">
             {formatRupees(totalPendingUdhaar)}
           </div>
-          <p className="text-xs text-[#aab4ad]">
-            Pending across <span className="font-bold text-[#dfe7e0] font-mono">{customersWithDues}</span> customers with active balances.
+          <p className="text-sm text-[#aab4ad]">
+            Pending across <span className="font-extrabold text-[#dfe7e0] font-mono">{customersWithDues}</span> customers with active balances.
           </p>
         </div>
 
-        <div className="p-3.5 bg-black/50 border border-white/10 rounded-xl text-xs text-[#aab4ad] flex items-start gap-2.5 max-w-md shadow-inner">
-          <ShieldCheck className="w-4 h-4 text-[#c9a24a] shrink-0 mt-0.5" />
-          <span className="leading-relaxed text-[11px] font-light">
+        <div className="p-4 bg-black/50 border border-white/10 rounded-xl text-xs sm:text-sm text-[#aab4ad] flex items-start gap-3 max-w-md shadow-inner">
+          <ShieldCheck className="w-5 h-5 text-[#c9a24a] shrink-0 mt-0.5" />
+          <span className="leading-relaxed">
             <strong className="text-[#dfe7e0]">Immutable Ledger:</strong> Balances cannot be manually rewritten; each rupee is strictly calculated from chronological debits and credits.
           </span>
         </div>
@@ -199,21 +200,21 @@ export default function CustomerUdhaar({
 
       {/* Search Bar */}
       <div className="relative">
-        <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78837c]" />
+        <Search className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78837c]" />
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search customer by name or phone number..."
-          className="w-full pl-10 pr-10 py-2.5 bg-black/50 border border-white/10 rounded-xl text-sm text-[#dfe7e0] placeholder-[#78837c] focus:outline-none focus:border-[#e0231c] focus:ring-1 focus:ring-[#e0231c]/50 transition shadow-inner"
+          className="w-full pl-11 pr-10 py-3 bg-black/50 border border-white/10 rounded-xl text-base text-[#dfe7e0] placeholder-[#78837c] focus:outline-none focus:border-[#e0231c] focus:ring-1 focus:ring-[#e0231c]/50 transition shadow-inner"
         />
         {searchTerm && (
           <button
             type="button"
             onClick={() => setSearchTerm('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#78837c] hover:text-[#dfe7e0] p-1"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[#78837c] hover:text-[#dfe7e0] p-1.5"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-4 h-4" />
           </button>
         )}
       </div>
@@ -222,9 +223,9 @@ export default function CustomerUdhaar({
       <div className="kage-card overflow-hidden">
         {filteredCustomers.length === 0 ? (
           <div className="p-12 text-center text-[#78837c]">
-            <Users className="w-12 h-12 mx-auto mb-3 opacity-30 text-[#dfe7e0]" />
-            <p className="font-bold text-sm text-[#dfe7e0]">No Accounts Found</p>
-            <p className="text-xs text-[#78837c] mt-1 max-w-sm mx-auto">
+            <Users className="w-14 h-14 mx-auto mb-3 opacity-30 text-[#dfe7e0]" />
+            <p className="font-bold text-base text-[#dfe7e0]">No Accounts Found</p>
+            <p className="text-sm text-[#78837c] mt-1.5 max-w-sm mx-auto">
               {searchTerm
                 ? 'No customer matched your search query.'
                 : 'Click "+ Add New Account" above to register your first customer ledger.'}
@@ -233,13 +234,13 @@ export default function CustomerUdhaar({
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-black/50 border-b border-white/10 text-[10px] font-mono uppercase tracking-[0.2em] text-[#78837c]">
+              <thead className="bg-black/50 border-b border-white/10 text-xs font-mono uppercase tracking-[0.15em] text-[#78837c]">
                 <tr>
-                  <th className="py-3.5 px-4">Customer Name</th>
-                  <th className="py-3.5 px-4">Phone Number</th>
-                  <th className="py-3.5 px-4 text-right">Outstanding Balance</th>
-                  <th className="py-3.5 px-4 text-center">Status</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
+                  <th className="py-3.5 px-4 font-bold">Customer Name</th>
+                  <th className="py-3.5 px-4 font-bold">Phone Number</th>
+                  <th className="py-3.5 px-4 text-right font-bold">Outstanding Balance</th>
+                  <th className="py-3.5 px-4 text-center font-bold">Status</th>
+                  <th className="py-3.5 px-4 text-right font-bold">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -250,28 +251,28 @@ export default function CustomerUdhaar({
                   return (
                     <tr key={customer.id} className="hover:bg-white/[0.03] transition-colors duration-100">
                       {/* Name */}
-                      <td className="py-3.5 px-4 font-bold text-[#dfe7e0]">
+                      <td className="py-3.5 px-4 font-bold text-sm sm:text-base text-[#dfe7e0]">
                         {customer.name}
                       </td>
 
                       {/* Clickable Phone (tel:) */}
-                      <td className="py-3.5 px-4 text-xs">
+                      <td className="py-3.5 px-4">
                         {customer.phone ? (
                           <a
                             href={`tel:${customer.phone.replace(/[\s-]/g, '')}`}
-                            className="inline-flex items-center gap-1.5 font-mono text-[#aab4ad] hover:text-[#dfe7e0] bg-white/[0.03] hover:bg-white/[0.08] px-2 py-1 rounded-lg border border-white/10 transition-colors"
+                            className="inline-flex items-center gap-1.5 font-mono text-xs sm:text-sm text-[#aab4ad] hover:text-[#dfe7e0] bg-white/[0.03] hover:bg-white/[0.08] px-2.5 py-1 rounded-lg border border-white/10 transition-colors"
                             title={`Tap to call: ${customer.phone}`}
                           >
                             <Phone className="w-3.5 h-3.5 text-[#c9a24a]" />
                             <span>{customer.phone}</span>
                           </a>
                         ) : (
-                          <span className="text-[#78837c] italic font-mono text-[11px]">No phone</span>
+                          <span className="text-[#78837c] italic font-mono text-xs">No phone</span>
                         )}
                       </td>
 
                       {/* Outstanding Balance */}
-                      <td className="py-3.5 px-4 text-right font-mono font-bold text-sm">
+                      <td className="py-3.5 px-4 text-right font-mono font-black text-base sm:text-lg">
                         <span className={hasDues ? 'text-[#ff5a3c]' : 'text-emerald-400'}>
                           {formatRupees(balance)}
                         </span>
@@ -280,15 +281,15 @@ export default function CustomerUdhaar({
                       {/* Status */}
                       <td className="py-3.5 px-4 text-center">
                         {hasDues ? (
-                          <span className="text-[9px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded bg-red-950/60 text-red-300 border border-red-500/30">
+                          <span className="text-xs font-mono uppercase tracking-wider px-2.5 py-1 rounded bg-red-950/60 text-red-300 border border-red-500/30 font-bold">
                             Udhaar Due
                           </span>
                         ) : balance < 0 ? (
-                          <span className="text-[9px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded bg-blue-950/60 text-blue-300 border border-blue-500/30">
+                          <span className="text-xs font-mono uppercase tracking-wider px-2.5 py-1 rounded bg-blue-950/60 text-blue-300 border border-blue-500/30 font-bold">
                             Advance Paid
                           </span>
                         ) : (
-                          <span className="text-[9px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded bg-emerald-950/50 text-emerald-300 border border-emerald-500/30">
+                          <span className="text-xs font-mono uppercase tracking-wider px-2.5 py-1 rounded bg-emerald-950/50 text-emerald-300 border border-emerald-500/30 font-bold">
                             Clear (₹0)
                           </span>
                         )}
@@ -296,7 +297,7 @@ export default function CustomerUdhaar({
 
                       {/* Quick Actions */}
                       <td className="py-3.5 px-4 text-right">
-                        <div className="inline-flex items-center gap-1.5">
+                        <div className="inline-flex items-center gap-2">
                           {/* Give Udhaar (+ Credit) */}
                           <button
                             type="button"
@@ -306,7 +307,7 @@ export default function CustomerUdhaar({
                               setUdhaarNote('');
                               setActiveCustomerForUdhaar(customer);
                             }}
-                            className="px-2.5 py-1 text-xs font-mono font-bold text-red-300 bg-red-950/40 hover:bg-red-950/70 border border-red-500/30 rounded-lg transition active:scale-95"
+                            className="px-3 py-1.5 text-xs font-mono font-bold text-red-300 bg-red-950/40 hover:bg-red-950/70 border border-red-500/30 rounded-lg transition active:scale-95"
                             title="Add Credit / Udhaar"
                           >
                             + Udhaar
@@ -322,7 +323,7 @@ export default function CustomerUdhaar({
                               setPaymentMode('Cash');
                               setActiveCustomerForPayment(customer);
                             }}
-                            className="px-2.5 py-1 text-xs font-mono font-bold text-emerald-300 bg-emerald-950/40 hover:bg-emerald-950/70 border border-emerald-500/30 rounded-lg transition active:scale-95"
+                            className="px-3 py-1.5 text-xs font-mono font-bold text-emerald-300 bg-emerald-950/40 hover:bg-emerald-950/70 border border-emerald-500/30 rounded-lg transition active:scale-95"
                             title="Receive Payment"
                           >
                             - Payment
@@ -332,10 +333,10 @@ export default function CustomerUdhaar({
                           <button
                             type="button"
                             onClick={() => setActiveCustomerForPassbook(customer)}
-                            className="p-1.5 text-[#78837c] hover:text-[#dfe7e0] hover:bg-white/[0.08] rounded-lg transition active:scale-95"
-                            title="View Transaction History"
+                            className="p-2 text-[#78837c] hover:text-[#dfe7e0] hover:bg-white/[0.08] rounded-lg transition active:scale-95"
+                            title="View Passbook & Statement"
                           >
-                            <History className="w-4 h-4" />
+                            <History className="w-4 h-4 text-[#c9a24a]" />
                           </button>
                         </div>
                       </td>

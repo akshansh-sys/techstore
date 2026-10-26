@@ -183,7 +183,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#05070a] text-[#dfe7e0] relative selection:bg-[#e0231c] selection:text-white overflow-x-hidden max-w-full">
-      {/* 1. Authentic Kage Three.js 3D Background Layer (Optimized for maximum speed) */}
+      {/* 1. Authentic Kage Three.js 3D Background Layer (Active in dark mode, hidden in white mode for 100% crispness) */}
       <LandingPageFrame
         title="Kage 3D Temple Sanctuary"
         sourceUrl="/landing-pages/kage.html?q=low&dpr=1&shadow=0"
@@ -196,8 +196,9 @@ export default function App() {
           height: '100vh',
           pointerEvents: 'none',
           zIndex: 0,
-          opacity: theme === 'dark' ? 0.68 : 0.22,
-          transition: 'opacity 0.4s ease',
+          opacity: theme === 'dark' ? 0.68 : 0,
+          display: theme === 'dark' ? 'block' : 'none',
+          transition: 'opacity 0.3s ease',
         }}
       />
 

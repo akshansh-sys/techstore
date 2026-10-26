@@ -272,33 +272,33 @@ export default function Billing({
       {/* Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#dfe7e0] uppercase">
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#dfe7e0] uppercase">
               Billing Counter
             </h2>
-            <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-red-950/50 text-red-300 border border-red-500/30">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-red-950/50 text-red-300 border border-red-500/30">
               POS Ready
             </span>
           </div>
-          <p className="text-xs text-[#78837c] font-mono mt-1">
+          <p className="text-sm text-[#78837c] font-mono mt-1">
             Search items with auto-recommendations, adjust quantities, and print thermal receipts
           </p>
         </div>
 
-        <div className="text-xs text-[#78837c] font-mono bg-black/40 px-3 py-1.5 rounded-xl border border-white/10 shadow-inner self-start sm:self-auto">
-          <span>{products.length} Items Available</span>
+        <div className="text-sm text-[#78837c] font-mono bg-black/40 px-3.5 py-2 rounded-xl border border-white/10 shadow-inner self-start sm:self-auto">
+          <span><strong className="text-[#dfe7e0]">{products.length}</strong> Items Available</span>
         </div>
       </div>
 
       {/* Error alert if any */}
       {errorMessage && (
-        <div className="flex items-start gap-3 p-3.5 bg-red-950/40 border border-red-500/40 text-red-200 rounded-xl text-xs sm:text-sm animate-fade-in shadow-lg">
+        <div className="flex items-start gap-3 p-4 bg-red-950/40 border border-red-500/40 text-red-200 rounded-xl text-sm animate-fade-in shadow-lg">
           <AlertCircle className="w-5 h-5 text-[#ff5a3c] shrink-0 mt-0.5" />
           <div className="flex-1 font-medium leading-relaxed">{errorMessage}</div>
           <button
             type="button"
             onClick={() => setErrorMessage('')}
-            className="text-xs text-red-400 hover:text-red-200 p-1"
+            className="text-sm text-red-400 hover:text-red-200 p-1"
           >
             <X className="w-4 h-4" />
           </button>
@@ -308,22 +308,22 @@ export default function Billing({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Product Selector & Recommendations */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="kage-card p-5">
-            <h3 className="font-bold text-xs uppercase tracking-wider text-[#dfe7e0] mb-3 flex items-center justify-between">
+          <div className="kage-card p-5 sm:p-6">
+            <h3 className="font-extrabold text-sm uppercase tracking-wider text-[#dfe7e0] mb-3.5 flex items-center justify-between">
               <span>Find & Select Items</span>
-              <span className="text-[10px] font-mono text-[#78837c]">
+              <span className="text-xs font-mono text-[#78837c]">
                 Live Search
               </span>
             </h3>
 
             {/* Smart Search with Recommendations Dropdown */}
-            <div className="relative mb-3.5" ref={searchContainerRef}>
-              <label className="block text-[10px] font-mono uppercase tracking-wider text-[#aab4ad] mb-1.5">
+            <div className="relative mb-4" ref={searchContainerRef}>
+              <label className="block text-xs font-mono uppercase tracking-wider text-[#aab4ad] mb-1.5 font-semibold">
                 Item Search & Live Recommendations
               </label>
 
               <div className="relative">
-                <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78837c]" />
+                <Search className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78837c]" />
                 <input
                   type="text"
                   value={productSearch}
@@ -333,7 +333,7 @@ export default function Billing({
                     setShowRecommendations(true);
                   }}
                   placeholder="e.g. Earbuds, Charger, Basmati..."
-                  className="w-full pl-10 pr-9 py-2.5 bg-black/50 border border-white/15 rounded-xl text-sm text-[#dfe7e0] placeholder-[#78837c] focus:outline-none focus:border-[#e0231c] focus:ring-1 focus:ring-[#e0231c]/50 transition shadow-inner"
+                  className="w-full pl-11 pr-10 py-3 bg-black/50 border border-white/15 rounded-xl text-base text-[#dfe7e0] placeholder-[#78837c] focus:outline-none focus:border-[#e0231c] focus:ring-1 focus:ring-[#e0231c]/50 transition shadow-inner"
                 />
 
                 {productSearch && (
@@ -343,9 +343,9 @@ export default function Billing({
                       setProductSearch('');
                       setSelectedProductId('');
                     }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78837c] hover:text-[#dfe7e0] p-1 rounded-md"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78837c] hover:text-[#dfe7e0] p-1.5 rounded-md"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-4 h-4" />
                   </button>
                 )}
               </div>
@@ -353,18 +353,18 @@ export default function Billing({
               {/* Recommendations Floating Popover */}
               {showRecommendations && (
                 <div className="absolute left-0 right-0 top-full mt-1.5 bg-[#0a0e12]/95 backdrop-blur-xl rounded-2xl border border-white/20 shadow-[0_12px_40px_rgba(0,0,0,0.95)] z-30 max-h-72 overflow-y-auto divide-y divide-white/5 animate-scale-up">
-                  <div className="px-3.5 py-2 bg-black/60 text-[9px] font-mono uppercase tracking-widest text-[#78837c] flex justify-between items-center sticky top-0 border-b border-white/10 backdrop-blur-md">
-                    <span className="flex items-center gap-1.5 text-red-300">
-                      <Sparkles className="w-3 h-3 text-[#e0231c]" />
+                  <div className="px-4 py-2.5 bg-black/60 text-xs font-mono uppercase tracking-wider text-[#78837c] flex justify-between items-center sticky top-0 border-b border-white/10 backdrop-blur-md">
+                    <span className="flex items-center gap-1.5 text-red-300 font-bold">
+                      <Sparkles className="w-3.5 h-3.5 text-[#e0231c]" />
                       {trimmedSearch ? 'Matching Recommendations' : 'Popular Items'}
                     </span>
-                    <span className="text-[9px] text-[#78837c] font-normal">
+                    <span className="text-xs text-[#78837c] font-normal">
                       Tap + to add 1 unit
                     </span>
                   </div>
 
                   {recommendedProducts.length === 0 ? (
-                    <div className="p-6 text-center text-xs text-[#78837c] font-mono">
+                    <div className="p-6 text-center text-sm text-[#78837c] font-mono">
                       No items matching "{productSearch}"
                     </div>
                   ) : (
@@ -377,25 +377,25 @@ export default function Billing({
                         <div
                           key={p.id}
                           onClick={() => handleSelectRecommendation(p)}
-                          className={`p-3 flex items-center justify-between hover:bg-white/[0.04] transition cursor-pointer ${
+                          className={`p-3.5 flex items-center justify-between hover:bg-white/[0.04] transition cursor-pointer ${
                             isSelected ? 'bg-red-950/30 border-l-4 border-[#e0231c]' : ''
                           }`}
                         >
                           <div className="flex-1 pr-3 min-w-0">
-                            <div className="font-bold text-xs text-[#dfe7e0] leading-tight truncate">
+                            <div className="font-bold text-sm sm:text-base text-[#dfe7e0] leading-snug truncate">
                               {p.name}
                             </div>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-[9px] font-mono text-[#78837c] px-1.5 py-0.2 bg-black/40 rounded border border-white/5">
+                              <span className="text-xs font-mono text-[#78837c] px-2 py-0.5 bg-black/40 rounded border border-white/5">
                                 {p.category || 'General'}
                               </span>
                               <span
-                                className={`text-[10px] font-mono ${
+                                className={`text-xs font-mono font-medium ${
                                   isOutOfStock
                                     ? 'text-red-400 font-bold'
                                     : isLowStock
-                                    ? 'text-amber-300'
-                                    : 'text-emerald-400'
+                                    ? 'text-amber-300 font-semibold'
+                                    : 'text-emerald-400 font-semibold'
                                 }`}
                               >
                                 {isOutOfStock
@@ -407,8 +407,8 @@ export default function Billing({
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-2.5 shrink-0">
-                            <span className="font-mono font-bold text-xs sm:text-sm text-[#c9a24a]">
+                          <div className="flex items-center gap-3 shrink-0">
+                            <span className="font-mono font-extrabold text-sm sm:text-base text-[#c9a24a]">
                               ₹{p.sellingPrice}
                             </span>
                             <button
@@ -416,7 +416,7 @@ export default function Billing({
                               onClick={(e) => handleQuickAdd(p, e)}
                               disabled={isOutOfStock}
                               title="Add 1 directly to cart"
-                              className="px-2.5 py-1.5 text-xs font-mono font-bold btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed rounded-lg transition flex items-center gap-1 active:scale-95"
+                              className="px-3 py-1.5 text-xs font-mono font-bold btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed rounded-lg transition flex items-center gap-1 active:scale-95"
                             >
                               <Plus className="w-3.5 h-3.5" />
                               <span>Add</span>
@@ -431,9 +431,9 @@ export default function Billing({
             </div>
 
             {/* Product Dropdown Selection (Fallback) */}
-            <div className="space-y-3.5">
+            <div className="space-y-4">
               <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-[#aab4ad] mb-1">
+                <label className="block text-xs font-mono uppercase tracking-wider text-[#aab4ad] mb-1.5 font-semibold">
                   Or Pick Directly from Full Catalog
                 </label>
                 <select
@@ -445,7 +445,7 @@ export default function Billing({
                     setSelectedQuantity(1);
                     setErrorMessage('');
                   }}
-                  className="w-full px-3.5 py-2.5 bg-black/50 border border-white/15 rounded-xl text-xs sm:text-sm text-[#dfe7e0] focus:outline-none focus:border-[#e0231c] shadow-inner"
+                  className="w-full px-4 py-3 bg-black/50 border border-white/15 rounded-xl text-sm sm:text-base text-[#dfe7e0] focus:outline-none focus:border-[#e0231c] shadow-inner"
                 >
                   <option value="" className="bg-[#05070a] text-[#78837c]">-- Choose item from list --</option>
                   {availableProducts.map((p) => (
@@ -463,14 +463,14 @@ export default function Billing({
 
               {/* Selected Product Preview Card */}
               {selectedProduct && (
-                <div className="p-3.5 bg-black/50 border border-[#e0231c]/30 rounded-xl text-xs space-y-1.5 animate-fade-in shadow-inner">
+                <div className="p-4 bg-black/50 border border-[#e0231c]/30 rounded-xl space-y-2 animate-fade-in shadow-inner">
                   <div className="flex justify-between items-baseline font-bold text-[#dfe7e0]">
-                    <span className="truncate pr-2">{selectedProduct.name}</span>
-                    <span className="text-[#c9a24a] font-mono text-sm shrink-0">
+                    <span className="text-sm sm:text-base truncate pr-2">{selectedProduct.name}</span>
+                    <span className="text-[#c9a24a] font-mono text-base sm:text-lg font-extrabold shrink-0">
                       ₹{selectedProduct.sellingPrice}
                     </span>
                   </div>
-                  <div className="flex justify-between text-[#78837c] font-mono text-[11px]">
+                  <div className="flex justify-between text-[#78837c] font-mono text-xs sm:text-sm">
                     <span>Available In Stock:</span>
                     <span
                       className={`font-bold font-mono ${
@@ -488,7 +488,7 @@ export default function Billing({
               {/* Quantity Input */}
               <div className="grid grid-cols-2 gap-3 items-end">
                 <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-[#aab4ad] mb-1">
+                  <label className="block text-xs font-mono uppercase tracking-wider text-[#aab4ad] mb-1.5 font-semibold">
                     Custom Quantity
                   </label>
                   <input
@@ -498,7 +498,7 @@ export default function Billing({
                     value={selectedQuantity}
                     onChange={(e) => setSelectedQuantity(e.target.value)}
                     disabled={!selectedProduct || selectedProduct.quantity <= 0}
-                    className="w-full px-3.5 py-2 bg-black/50 border border-white/15 rounded-xl text-sm font-mono text-[#dfe7e0] focus:outline-none focus:border-[#e0231c] disabled:opacity-40"
+                    className="w-full px-4 py-2.5 bg-black/50 border border-white/15 rounded-xl text-base font-mono text-[#dfe7e0] focus:outline-none focus:border-[#e0231c] disabled:opacity-40"
                   />
                 </div>
 
@@ -506,7 +506,7 @@ export default function Billing({
                   type="button"
                   onClick={handleAddToCart}
                   disabled={!selectedProduct || selectedProduct.quantity <= 0}
-                  className="w-full py-2.5 px-4 btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5 active:scale-95 shadow-md"
+                  className="w-full py-3 px-4 btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5 active:scale-95 shadow-md"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add to Bill</span>
@@ -516,36 +516,36 @@ export default function Billing({
           </div>
 
           {/* Customer & Payment Options Card */}
-          <div className="kage-card p-5 space-y-4">
-            <h3 className="font-bold text-xs uppercase tracking-wider text-[#dfe7e0]">
+          <div className="kage-card p-5 sm:p-6 space-y-4">
+            <h3 className="font-extrabold text-sm uppercase tracking-wider text-[#dfe7e0]">
               Customer & Payment Mode
             </h3>
 
             {/* Customer Name */}
             <div>
-              <label className="block text-[10px] font-mono uppercase tracking-wider text-[#aab4ad] mb-1">
+              <label className="block text-xs font-mono uppercase tracking-wider text-[#aab4ad] mb-1.5 font-semibold">
                 Customer Name (Optional)
               </label>
               <div className="relative">
-                <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#78837c]" />
+                <User className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78837c]" />
                 <input
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="Walk-in Customer"
-                  className="w-full pl-9 pr-3 py-2 bg-black/50 border border-white/15 rounded-xl text-sm text-[#dfe7e0] placeholder-[#78837c] focus:outline-none focus:border-[#e0231c]"
+                  className="w-full pl-11 pr-3.5 py-3 bg-black/50 border border-white/15 rounded-xl text-base text-[#dfe7e0] placeholder-[#78837c] focus:outline-none focus:border-[#e0231c]"
                 />
               </div>
 
               {customers.length > 0 && (
-                <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                  <span className="text-[10px] text-[#78837c] font-mono">Frequent:</span>
+                <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
+                  <span className="text-xs text-[#78837c] font-mono">Frequent:</span>
                   {customers.slice(0, 3).map((c) => (
                     <button
                       key={c.id}
                       type="button"
                       onClick={() => setCustomerName(c.name)}
-                      className="text-[10px] font-mono px-2 py-0.5 bg-white/[0.04] hover:bg-white/[0.08] text-[#aab4ad] hover:text-[#dfe7e0] rounded-lg border border-white/10 transition"
+                      className="text-xs font-mono px-2.5 py-1 bg-white/[0.04] hover:bg-white/[0.08] text-[#aab4ad] hover:text-[#dfe7e0] rounded-lg border border-white/10 transition"
                     >
                       {c.name}
                     </button>
@@ -556,40 +556,40 @@ export default function Billing({
 
             {/* Payment Mode Selector */}
             <div>
-              <label className="block text-[10px] font-mono uppercase tracking-wider text-[#aab4ad] mb-1.5">
+              <label className="block text-xs font-mono uppercase tracking-wider text-[#aab4ad] mb-1.5 font-semibold">
                 Payment Method <span className="text-[#e0231c]">*</span>
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('Cash')}
-                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-mono uppercase tracking-wider transition-all duration-150 ${
+                  className={`flex items-center justify-center gap-2 p-3.5 rounded-xl border text-sm font-mono uppercase tracking-wider transition-all duration-150 ${
                     paymentMethod === 'Cash'
                       ? 'bg-[#e0231c]/25 border-[#e0231c] text-white shadow-[0_0_15px_rgba(224,35,28,0.2)] font-bold'
                       : 'bg-black/40 border-white/10 text-[#78837c] hover:text-[#dfe7e0]'
                   }`}
                 >
-                  <Banknote className="w-4 h-4 text-[#c9a24a]" />
+                  <Banknote className="w-5 h-5 text-[#c9a24a]" />
                   <span>Cash</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('UPI')}
-                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-mono uppercase tracking-wider transition-all duration-150 ${
+                  className={`flex items-center justify-center gap-2 p-3.5 rounded-xl border text-sm font-mono uppercase tracking-wider transition-all duration-150 ${
                     paymentMethod === 'UPI'
                       ? 'bg-blue-950/40 border-blue-500 text-blue-200 shadow-[0_0_15px_rgba(59,130,246,0.2)] font-bold'
                       : 'bg-black/40 border-white/10 text-[#78837c] hover:text-[#dfe7e0]'
                   }`}
                 >
-                  <QrCode className="w-4 h-4 text-blue-400" />
+                  <QrCode className="w-5 h-5 text-blue-400" />
                   <span>UPI / QR</span>
                 </button>
               </div>
 
               {/* UPI Notice */}
               {paymentMethod === 'UPI' && (
-                <div className="mt-2.5 p-3 bg-blue-950/20 border border-blue-500/30 rounded-xl text-[11px] text-blue-200 flex items-start gap-2 leading-relaxed animate-fade-in">
+                <div className="mt-2.5 p-3.5 bg-blue-950/20 border border-blue-500/30 rounded-xl text-xs text-blue-200 flex items-start gap-2.5 leading-relaxed animate-fade-in">
                   <Info className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
                   <span>
                     <strong>Soundbox Verification:</strong> Confirm transaction arrival on PhonePe, GPay, or Paytm before finalizing the bill.
@@ -602,16 +602,16 @@ export default function Billing({
 
         {/* Right Column: Active Bill / Cart Summary */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="kage-card p-5 sm:p-6 flex flex-col min-h-[480px]">
+          <div className="kage-card p-5 sm:p-6 flex flex-col min-h-[500px]">
             <div className="flex items-center justify-between pb-3.5 mb-3 border-b border-white/10">
               <div className="flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg bg-white/[0.05] text-[#c9a24a]">
-                  <ShoppingCart className="w-4 h-4" />
+                <div className="p-2 rounded-lg bg-white/[0.05] text-[#c9a24a]">
+                  <ShoppingCart className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-xs uppercase tracking-wider text-[#dfe7e0]">
+                <h3 className="font-extrabold text-sm sm:text-base uppercase tracking-wider text-[#dfe7e0]">
                   Active Cart Ledger
                 </h3>
-                <span className="text-xs bg-black/40 text-amber-300 border border-amber-600/30 px-2 py-0.5 rounded-full font-mono font-bold">
+                <span className="text-xs sm:text-sm bg-black/40 text-amber-300 border border-amber-600/30 px-2.5 py-0.5 rounded-full font-mono font-bold">
                   {totalItemCount} {totalItemCount === 1 ? 'item' : 'items'}
                 </span>
               </div>
@@ -619,7 +619,7 @@ export default function Billing({
                 <button
                   type="button"
                   onClick={handleClearCart}
-                  className="text-xs text-red-400 hover:text-red-300 font-mono transition"
+                  className="text-xs sm:text-sm text-red-400 hover:text-red-300 font-mono font-semibold transition"
                 >
                   Clear Cart
                 </button>
@@ -627,57 +627,57 @@ export default function Billing({
             </div>
 
             {/* Cart Items List */}
-            <div className="flex-1 overflow-y-auto max-h-[340px]">
+            <div className="flex-1 overflow-y-auto max-h-[360px]">
               {cart.length === 0 ? (
                 <div className="py-20 text-center text-[#78837c]">
-                  <ShoppingCart className="w-12 h-12 mx-auto mb-2 opacity-30 text-[#dfe7e0]" />
-                  <p className="font-bold text-sm text-[#dfe7e0]">Cart is Empty</p>
-                  <p className="text-xs text-[#78837c] mt-1 max-w-xs mx-auto">
+                  <ShoppingCart className="w-14 h-14 mx-auto mb-3 opacity-30 text-[#dfe7e0]" />
+                  <p className="font-bold text-base text-[#dfe7e0]">Cart is Empty</p>
+                  <p className="text-sm text-[#78837c] mt-1.5 max-w-xs mx-auto">
                     Type an item name on the left or tap "+ Add" on recommendations to begin compiling the bill.
                   </p>
                 </div>
               ) : (
-                <table className="w-full text-xs">
-                  <thead className="text-[#78837c] border-b border-white/10 text-[9px] font-mono uppercase tracking-[0.2em]">
+                <table className="w-full text-sm">
+                  <thead className="text-[#78837c] border-b border-white/10 text-xs font-mono uppercase tracking-[0.15em]">
                     <tr>
-                      <th className="text-left pb-2.5">Product</th>
-                      <th className="text-center pb-2.5">Rate</th>
-                      <th className="text-center pb-2.5">Qty</th>
-                      <th className="text-right pb-2.5">Total</th>
-                      <th className="pb-2.5 w-8"></th>
+                      <th className="text-left pb-3 font-bold">Product</th>
+                      <th className="text-center pb-3 font-bold">Rate</th>
+                      <th className="text-center pb-3 font-bold">Qty</th>
+                      <th className="text-right pb-3 font-bold">Total</th>
+                      <th className="pb-3 w-8"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     {cart.map((item) => (
                       <tr key={item.productId} className="hover:bg-white/[0.03] transition-colors">
                         {/* Name */}
-                        <td className="py-3 font-semibold text-[#dfe7e0] max-w-[170px] truncate">
+                        <td className="py-3.5 font-bold text-sm sm:text-base text-[#dfe7e0] max-w-[180px] truncate">
                           {item.name}
                         </td>
 
                         {/* Rate */}
-                        <td className="py-3 text-center font-mono text-[#aab4ad]">
+                        <td className="py-3.5 text-center font-mono font-semibold text-sm sm:text-base text-[#aab4ad]">
                           ₹{item.price}
                         </td>
 
                         {/* Quantity Controls */}
-                        <td className="py-3 text-center">
-                          <div className="inline-flex items-center gap-1.5 bg-black/50 p-0.5 rounded-lg border border-white/10">
+                        <td className="py-3.5 text-center">
+                          <div className="inline-flex items-center gap-1.5 bg-black/50 p-1 rounded-lg border border-white/10">
                             <button
                               type="button"
                               onClick={() => handleUpdateCartQuantity(item.productId, -1)}
-                              className="w-5 h-5 flex items-center justify-center font-bold text-[#aab4ad] hover:text-white hover:bg-white/[0.1] rounded transition active:scale-95"
+                              className="w-7 h-7 flex items-center justify-center font-bold text-sm text-[#aab4ad] hover:text-white hover:bg-white/[0.1] rounded transition active:scale-95"
                               title="Decrease"
                             >
                               -
                             </button>
-                            <span className="w-6 text-center font-bold font-mono text-[#dfe7e0]">
+                            <span className="w-7 text-center font-bold font-mono text-sm sm:text-base text-[#dfe7e0]">
                               {item.quantity}
                             </span>
                             <button
                               type="button"
                               onClick={() => handleUpdateCartQuantity(item.productId, 1)}
-                              className="w-5 h-5 flex items-center justify-center font-bold text-[#aab4ad] hover:text-white hover:bg-white/[0.1] rounded transition active:scale-95"
+                              className="w-7 h-7 flex items-center justify-center font-bold text-sm text-[#aab4ad] hover:text-white hover:bg-white/[0.1] rounded transition active:scale-95"
                               title="Increase"
                             >
                               +
@@ -686,19 +686,19 @@ export default function Billing({
                         </td>
 
                         {/* Item Total */}
-                        <td className="py-3 text-right font-bold text-[#c9a24a] font-mono">
+                        <td className="py-3.5 text-right font-extrabold text-[#c9a24a] font-mono text-base sm:text-lg">
                           {formatRupees(item.total)}
                         </td>
 
                         {/* Remove */}
-                        <td className="py-3 text-right">
+                        <td className="py-3.5 text-right">
                           <button
                             type="button"
                             onClick={() => handleRemoveFromCart(item.productId)}
-                            className="p-1 text-[#78837c] hover:text-red-400 rounded transition"
+                            className="p-1.5 text-[#78837c] hover:text-red-400 rounded-lg transition"
                             title="Remove item"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </td>
                       </tr>
@@ -709,21 +709,21 @@ export default function Billing({
             </div>
 
             {/* Cart Bill Summary & Final Checkout */}
-            <div className="mt-auto pt-4 border-t border-white/10 space-y-3">
-              <div className="space-y-1.5 text-xs font-mono">
+            <div className="mt-auto pt-4 border-t border-white/10 space-y-3.5">
+              <div className="space-y-2 text-sm font-mono">
                 <div className="flex justify-between text-[#aab4ad]">
                   <span>Customer:</span>
-                  <span className="font-semibold text-[#dfe7e0]">
+                  <span className="font-bold text-[#dfe7e0]">
                     {customerName.trim() || 'Walk-in Customer'}
                   </span>
                 </div>
                 <div className="flex justify-between text-[#aab4ad]">
                   <span>Payment Mode:</span>
-                  <span className="font-bold text-[#c9a24a]">{paymentMethod}</span>
+                  <span className="font-extrabold text-[#c9a24a]">{paymentMethod}</span>
                 </div>
-                <div className="flex justify-between items-baseline pt-2 border-t border-white/10">
-                  <span className="text-xs uppercase tracking-wider text-[#dfe7e0]">Grand Total:</span>
-                  <span className="text-2xl sm:text-3xl font-bold text-[#c9a24a] font-mono">
+                <div className="flex justify-between items-baseline pt-2.5 border-t border-white/10">
+                  <span className="text-sm sm:text-base uppercase tracking-wider text-[#dfe7e0] font-bold">Grand Total:</span>
+                  <span className="text-3xl sm:text-4xl font-black text-[#c9a24a] font-mono">
                     {formatRupees(cartTotal)}
                   </span>
                 </div>
@@ -734,9 +734,9 @@ export default function Billing({
                 type="button"
                 onClick={handleCompleteSale}
                 disabled={cart.length === 0 || isSubmitting}
-                className="w-full py-4 px-4 btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-2 active:scale-95 shadow-lg"
+                className="w-full py-4 px-4 btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed font-black text-sm sm:text-base uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-2 active:scale-95 shadow-lg"
               >
-                <CheckCircle className="w-5 h-5" />
+                <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6" />
                 <span>{isSubmitting ? 'Recording Bill...' : 'Complete Sale & Print Bill'}</span>
               </button>
             </div>
