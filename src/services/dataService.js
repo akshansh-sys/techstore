@@ -18,14 +18,14 @@ const STORAGE_KEYS = {
   SHOP_PROFILE: 'techstore_shop_profile',
 };
 
-// Default Shop Profile
+// Default Shop Profile (Only displays phone or email if user explicitly enters it)
 const DEFAULT_SHOP_PROFILE = {
-  name: 'Apna General Store',
-  tagline: 'Quality Products & Daily Essentials',
-  phone: '+91 98765 43210',
-  email: 'contact@apnageneralstore.in',
-  address: 'Main Market, Station Road, Kota (Raj.)',
-  gstin: '08AAAAA0000A1Z5',
+  name: 'TechStore',
+  tagline: 'Retail Terminal & Inventory Ledger',
+  phone: '',
+  email: '',
+  address: '',
+  gstin: '',
 };
 
 // Helper: Safely read and parse JSON from localStorage
@@ -499,19 +499,19 @@ export function loadSampleData() {
     {
       id: 'cust_1',
       name: 'Ramesh Sharma',
-      phone: '9829012345',
+      phone: '',
       createdAt: new Date(Date.now() - 7 * 86400000).toISOString(),
     },
     {
       id: 'cust_2',
       name: 'Pooja Verma',
-      phone: '9414098765',
+      phone: '',
       createdAt: new Date(Date.now() - 5 * 86400000).toISOString(),
     },
     {
       id: 'cust_3',
       name: 'Amit Patel',
-      phone: '9782054321',
+      phone: '',
       createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
     },
   ];

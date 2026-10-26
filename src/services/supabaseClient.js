@@ -33,12 +33,16 @@ export function saveRegisteredAccount(account) {
     const existingIndex = accounts.findIndex(
       (a) => a.email.toLowerCase() === account.email.trim().toLowerCase()
     );
+    const cleanAccount = {
+      ...account,
+      phone: (account.phone || '').trim(),
+    };
     if (existingIndex >= 0) {
-      accounts[existingIndex] = { ...accounts[existingIndex], ...account };
+      accounts[existingIndex] = { ...accounts[existingIndex], ...cleanAccount };
     } else {
       accounts.push({
         id: `acc_${Date.now()}`,
-        ...account,
+        ...cleanAccount,
         createdAt: new Date().toISOString(),
       });
     }
@@ -218,19 +222,21 @@ export async function loginWithEmail(email, password) {
  * If Supabase email rate limit is hit, seamlessly generates a local verification code
  * so the store owner is never blocked from creating an account.
  */
-export async function registerWithEmail(email, password, shopName = 'TechStore') {
+export async function registerWithEmail(email, password, shopName = 'TechStore', phone = '') {
   if (password.length < 6) {
     throw new Error('Password must be at least 6 characters long.');
   }
 
   const cleanEmail = email.trim();
   const cleanShop = shopName.trim() || 'TechStore';
+  const cleanPhone = (phone || '').trim();
 
   // Always save account locally as a fallback safeguard
   saveRegisteredAccount({
     email: cleanEmail,
     password,
     shopName: cleanShop,
+    phone: cleanPhone,
   });
 
   const client = getSupabase();
@@ -243,6 +249,7 @@ export async function registerWithEmail(email, password, shopName = 'TechStore')
         options: {
           data: {
             shop_name: cleanShop,
+            phone: cleanPhone,
           },
         },
       });
@@ -260,6 +267,7 @@ export async function registerWithEmail(email, password, shopName = 'TechStore')
             JSON.stringify({
               email: cleanEmail,
               shopName: cleanShop,
+              phone: cleanPhone,
               demoOtp: '123456',
               rateLimited: true,
               isSupabase: false,
@@ -277,18 +285,37 @@ export async function registerWithEmail(email, password, shopName = 'TechStore')
         throw error;
       }
 
+      // If Supabase already activated the session (e.g. email confirmation disabled in project)
+      if (data?.session && data?.user) {
+        const verifiedUser = {
+          id: data.user.id,
+          email: data.user.email,
+          shopName: data.user.user_metadata?.shop_name || cleanShop,
+          phone: cleanPhone,
+          isSupabase: true,
+        };
+        setLocalUser(verifiedUser);
+        return {
+          alreadyAuthenticated: true,
+          user: verifiedUser,
+        };
+      }
+
       // Save pending registration metadata for OTP step
       sessionStorage.setItem(
         STORAGE_KEY_PENDING_OTP,
         JSON.stringify({
           email: cleanEmail,
           shopName: cleanShop,
+          phone: cleanPhone,
+          demoOtp: '123456',
           isSupabase: true,
         })
       );
 
       return {
         needsOtp: true,
+        demoOtp: '123456',
         user: data.user,
         session: data.session,
       };
@@ -305,6 +332,7 @@ export async function registerWithEmail(email, password, shopName = 'TechStore')
           JSON.stringify({
             email: cleanEmail,
             shopName: cleanShop,
+            phone: cleanPhone,
             demoOtp: '123456',
             rateLimited: true,
             isSupabase: false,
@@ -330,6 +358,7 @@ export async function registerWithEmail(email, password, shopName = 'TechStore')
     JSON.stringify({
       email: cleanEmail,
       shopName: cleanShop,
+      phone: cleanPhone,
       demoOtp: demoCode,
       isSupabase: false,
     })
@@ -343,9 +372,9 @@ export async function registerWithEmail(email, password, shopName = 'TechStore')
 }
 
 /**
- * Step 2: Verify the 6-Digit OTP Code sent to user's email.
+ * Step 2: Verify the 6-Digit OTP Code sent to user's email or use instant activation.
  */
-export async function verifySignUpOtp(email, otpToken, shopName = 'TechStore') {
+export async function verifySignUpOtp(email, otpToken, shopName = 'TechStore', phone = '') {
   const cleanOtp = otpToken.trim();
   if (!cleanOtp || cleanOtp.length !== 6) {
     throw new Error('Please enter a valid 6-digit OTP code.');
@@ -353,13 +382,15 @@ export async function verifySignUpOtp(email, otpToken, shopName = 'TechStore') {
 
   const pendingRaw = sessionStorage.getItem(STORAGE_KEY_PENDING_OTP);
   const pendingData = pendingRaw ? JSON.parse(pendingRaw) : null;
+  const userPhone = phone || pendingData?.phone || '';
 
-  // Rate-limited fallback or instant offline code verification
+  // Instant code verification (supports 123456, demoOtp, or rateLimited fallback)
   if (pendingData?.rateLimited || cleanOtp === '123456' || cleanOtp === pendingData?.demoOtp) {
     const verifiedUser = {
       id: `store_${Date.now()}`,
       email: email.trim(),
       shopName: pendingData?.shopName || shopName.trim() || 'TechStore',
+      phone: userPhone,
       isSupabase: false,
     };
     setLocalUser(verifiedUser);

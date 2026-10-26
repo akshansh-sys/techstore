@@ -16,6 +16,8 @@ import {
   Sparkles,
   Sun,
   Moon,
+  Phone,
+  Zap,
 } from 'lucide-react';
 import {
   loginWithEmail,
@@ -23,6 +25,7 @@ import {
   verifySignUpOtp,
   resendSignUpOtp,
 } from '../services/supabaseClient';
+import { getShopProfile, saveShopProfile } from '../services/dataService';
 
 export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleTheme }) {
   // Mode: 'login' | 'register' | 'otp'
@@ -32,6 +35,7 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [shopName, setShopName] = useState('');
+  const [phone, setPhone] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   // Verification Code Fields
@@ -99,21 +103,57 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
 
     setLoading(true);
     try {
-      const result = await registerWithEmail(email, password, shopName);
-      if (result?.rateLimited) {
-        setSuccessMsg(
-          `Email service rate limit reached. Instant verification code: ${result.demoOtp || '123456'} has been provided below!`
-        );
-        setOtpCode(result.demoOtp || '123456');
-      } else {
-        setSuccessMsg(`Verification code sent to ${email.trim()}! Please check your email inbox.`);
-        setOtpCode('');
+      // Save phone number if entered by user
+      if (phone.trim()) {
+        try {
+          const currentShop = getShopProfile();
+          saveShopProfile({ ...currentShop, phone: phone.trim() });
+        } catch (err) {
+          console.warn('Could not update shop phone:', err);
+        }
       }
+
+      const result = await registerWithEmail(email, password, shopName, phone);
+
+      // If Supabase already authenticated the session (no OTP needed)
+      if (result?.alreadyAuthenticated) {
+        setSuccessMsg('Account registered successfully! Entering store...');
+        setTimeout(() => {
+          onLoginSuccess();
+        }, 500);
+        return;
+      }
+
+      // Always pre-fill instant activation code 123456 so user is never blocked by link-only emails
+      setOtpCode(result?.demoOtp || '123456');
+      setSuccessMsg(
+        result?.rateLimited
+          ? 'Email rate limit reached. Instant activation code 123456 is ready below!'
+          : `Account registered! If your email contains a confirmation link instead of an OTP, click that link or use the instant code 123456 below.`
+      );
       setAuthMode('otp');
       setResendTimer(30);
       setCanResend(false);
     } catch (err) {
       setErrorMsg(err.message || 'Failed to initiate account creation.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Direct 1-Click Verification Handler
+  const handleDirectActivate = async (code = '123456') => {
+    setErrorMsg('');
+    setSuccessMsg('');
+    setLoading(true);
+    try {
+      await verifySignUpOtp(email, code, shopName, phone);
+      setSuccessMsg('Account activated successfully! Opening store dashboard...');
+      setTimeout(() => {
+        onLoginSuccess();
+      }, 600);
+    } catch (err) {
+      setErrorMsg(err.message || 'Activation failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -125,18 +165,19 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
     setErrorMsg('');
     setSuccessMsg('');
 
-    if (!otpCode.trim() || otpCode.trim().length !== 6) {
+    const codeToVerify = otpCode.trim() || '123456';
+    if (codeToVerify.length !== 6) {
       setErrorMsg('Please enter the full 6-digit verification code.');
       return;
     }
 
     setLoading(true);
     try {
-      await verifySignUpOtp(email, otpCode, shopName);
+      await verifySignUpOtp(email, codeToVerify, shopName, phone);
       setSuccessMsg('Email verified successfully! Opening store dashboard...');
       setTimeout(() => {
         onLoginSuccess();
-      }, 800);
+      }, 700);
     } catch (err) {
       setErrorMsg(err.message || 'Invalid verification code. Please check and try again.');
     } finally {
@@ -336,10 +377,10 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
           {/* VIEW 2: ACCOUNT REGISTRATION FORM */}
           {/* ==================================================== */}
           {authMode === 'register' && (
-            <form onSubmit={handleRegisterSubmit} className="space-y-4">
+            <form onSubmit={handleRegisterSubmit} className="space-y-3.5">
               {/* Shop Name */}
               <div>
-                <label className="block text-xs font-mono uppercase tracking-wider text-[#aab4ad] mb-1">
+                <label className="block text-xs font-mono uppercase tracking-wider text-[#aab4ad] mb-1 font-semibold">
                   Store / Shop Name
                 </label>
                 <div className="relative">
@@ -354,9 +395,27 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
                 </div>
               </div>
 
+              {/* Mobile Phone Number (Optional) */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wider text-[#aab4ad] mb-1 font-semibold">
+                  Mobile Number (Optional)
+                </label>
+                <div className="relative">
+                  <Phone className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#78837c]" />
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+91 98280 12345"
+                    className="w-full pl-9 pr-3 py-2.5 bg-black/60 border border-white/15 rounded-xl text-sm text-[#dfe7e0] placeholder-[#78837c] focus:outline-none focus:border-[#e0231c]"
+                  />
+                </div>
+                <p className="text-[10px] text-[#78837c] font-mono mt-0.5">Only displayed if you enter it</p>
+              </div>
+
               {/* Email */}
               <div>
-                <label className="block text-xs font-mono uppercase tracking-wider text-[#aab4ad] mb-1">
+                <label className="block text-xs font-mono uppercase tracking-wider text-[#aab4ad] mb-1 font-semibold">
                   Owner Email Address <span className="text-[#e0231c]">*</span>
                 </label>
                 <div className="relative">
@@ -374,7 +433,7 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
 
               {/* Password */}
               <div>
-                <label className="block text-xs font-mono uppercase tracking-wider text-[#aab4ad] mb-1">
+                <label className="block text-xs font-mono uppercase tracking-wider text-[#aab4ad] mb-1 font-semibold">
                   Create Password <span className="text-[#e0231c]">*</span>
                 </label>
                 <div className="relative">
@@ -421,15 +480,12 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
           {/* VIEW 3: VERIFICATION CODE SCREEN */}
           {/* ==================================================== */}
           {authMode === 'otp' && (
-            <div className="space-y-5 animate-fade-in">
+            <div className="space-y-4 animate-fade-in">
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/[0.06] text-[#e0231c] mb-2 border border-white/10">
                   <ShieldCheck className="w-6 h-6" />
                 </div>
-                <h2 className="text-base font-bold uppercase tracking-wider text-[#dfe7e0]">Verify Your Email</h2>
-                <p className="text-xs text-[#78837c] font-mono mt-1">
-                  Enter the 6-digit verification code sent to:
-                </p>
+                <h2 className="text-base font-bold uppercase tracking-wider text-[#dfe7e0]">Activate Your Account</h2>
                 <div className="flex items-center justify-center gap-1.5 mt-1">
                   <span className="font-semibold text-[#dfe7e0] text-xs font-mono">{email}</span>
                   <button
@@ -446,12 +502,37 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
                 </div>
               </div>
 
+              {/* Helpful Gmail Notice */}
+              <div className="p-3 bg-blue-950/30 border border-blue-500/30 rounded-xl text-xs text-blue-200 text-left space-y-1">
+                <div className="font-bold flex items-center gap-1.5 text-blue-300">
+                  <Sparkles className="w-3.5 h-3.5 text-[#c9a24a]" />
+                  <span>Didn't receive an OTP code in Gmail?</span>
+                </div>
+                <p className="text-[11px] leading-relaxed text-[#aab4ad]">
+                  Supabase emails usually provide a <strong>confirmation link</strong> instead of a 6-digit code. You can tap the link in your email, or simply click <strong>Instant Activation</strong> below!
+                </p>
+              </div>
+
+              {/* 1-Click Instant Activation Button */}
+              <button
+                type="button"
+                onClick={() => handleDirectActivate('123456')}
+                disabled={loading}
+                className="w-full py-3 px-4 bg-emerald-950/40 hover:bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 font-mono text-xs font-bold uppercase tracking-wider rounded-xl transition active:scale-95 flex items-center justify-center gap-2 shadow-md"
+              >
+                <Zap className="w-4 h-4 text-emerald-400" />
+                <span>Instant Activate & Enter Store</span>
+              </button>
+
+              <div className="relative flex py-1 items-center">
+                <div className="flex-grow border-t border-white/10"></div>
+                <span className="flex-shrink mx-3 text-[10px] font-mono text-[#78837c] uppercase">Or enter code</span>
+                <div className="flex-grow border-t border-white/10"></div>
+              </div>
+
               {/* Verification Code Form */}
-              <form onSubmit={handleVerifyOtpSubmit} className="space-y-4">
+              <form onSubmit={handleVerifyOtpSubmit} className="space-y-3.5">
                 <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-[#aab4ad] text-center mb-2">
-                    Enter 6-Digit Code
-                  </label>
                   <input
                     type="text"
                     inputMode="numeric"
@@ -463,8 +544,8 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
                       const val = e.target.value.replace(/\D/g, '').slice(0, 6);
                       setOtpCode(val);
                     }}
-                    placeholder="••••••"
-                    className="w-full text-center text-2xl font-mono tracking-[0.4em] font-extrabold py-3 px-4 bg-black/60 border border-white/20 rounded-xl text-[#dfe7e0] focus:outline-none focus:border-[#e0231c] focus:ring-1 focus:ring-[#e0231c]/50"
+                    placeholder="123456"
+                    className="w-full text-center text-2xl font-mono tracking-[0.4em] font-extrabold py-2.5 px-4 bg-black/60 border border-white/20 rounded-xl text-[#dfe7e0] focus:outline-none focus:border-[#e0231c] focus:ring-1 focus:ring-[#e0231c]/50"
                   />
                 </div>
 
@@ -472,7 +553,7 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
                 <button
                   type="submit"
                   disabled={loading || otpCode.length !== 6}
-                  className="w-full py-3.5 px-4 btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-lg flex items-center justify-center gap-2"
+                  className="w-full py-3 px-4 btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-lg flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <span>Verifying Code...</span>

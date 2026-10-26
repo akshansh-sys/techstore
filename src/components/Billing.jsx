@@ -14,6 +14,10 @@ import {
   Sparkles,
   User,
   Receipt,
+  UploadCloud,
+  Maximize2,
+  Edit3,
+  Check,
 } from 'lucide-react';
 import { formatRupees } from '../utils/formatters';
 
@@ -37,6 +41,14 @@ export default function Billing({
   const [customerName, setCustomerName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Store UPI QR Code State (Owner's Custom QR & UPI ID)
+  const [storeQrImage, setStoreQrImage] = useState(() => localStorage.getItem('techstore_store_qr_code') || '');
+  const [storeUpiId, setStoreUpiId] = useState(() => localStorage.getItem('techstore_store_upi_id') || '');
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [isQrConfigOpen, setIsQrConfigOpen] = useState(false);
+  const [tempUpiId, setTempUpiId] = useState('');
+  const qrFileInputRef = useRef(null);
 
   // Ref for handling clicks outside recommendation container
   const searchContainerRef = useRef(null);
@@ -78,6 +90,54 @@ export default function Billing({
   // Calculate Cart Totals
   const cartTotal = cart.reduce((sum, item) => sum + item.total, 0);
   const totalItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  // QR Code Source (Uploaded Image or Dynamic UPI QR Code)
+  const dynamicUpiUrl = storeUpiId
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(
+        `upi://pay?pa=${storeUpiId}&pn=TechStore&am=${cartTotal}&cu=INR`
+      )}`
+    : '';
+  const activeQrSrc = storeQrImage || dynamicUpiUrl;
+
+  // Handle QR image file upload
+  const handleQrImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showToast('Please upload a valid image file (PNG/JPG/WebP)', 'error');
+      return;
+    }
+    if (file.size > 3 * 1024 * 1024) {
+      showToast('Image size should be under 3MB', 'error');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target.result;
+      setStoreQrImage(base64);
+      localStorage.setItem('techstore_store_qr_code', base64);
+      showToast('Store QR code image uploaded successfully!', 'success');
+      setIsQrConfigOpen(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle save custom UPI ID
+  const handleSaveUpiId = (e) => {
+    e.preventDefault();
+    const cleanUpi = tempUpiId.trim();
+    setStoreUpiId(cleanUpi);
+    localStorage.setItem('techstore_store_upi_id', cleanUpi);
+    setIsQrConfigOpen(false);
+    showToast(cleanUpi ? `UPI ID set to: ${cleanUpi}` : 'UPI ID cleared', 'success');
+  };
+
+  // Remove QR Image
+  const handleRemoveQrImage = () => {
+    setStoreQrImage('');
+    localStorage.removeItem('techstore_store_qr_code');
+    showToast('Store QR code image removed', 'info');
+  };
 
   // Select product from recommendation item
   const handleSelectRecommendation = (product) => {
@@ -587,13 +647,97 @@ export default function Billing({
                 </button>
               </div>
 
-              {/* UPI Notice */}
+              {/* Store UPI QR Code Section */}
               {paymentMethod === 'UPI' && (
-                <div className="mt-2.5 p-3.5 bg-blue-950/20 border border-blue-500/30 rounded-xl text-xs text-blue-200 flex items-start gap-2.5 leading-relaxed animate-fade-in">
-                  <Info className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-                  <span>
-                    <strong>Soundbox Verification:</strong> Confirm transaction arrival on PhonePe, GPay, or Paytm before finalizing the bill.
-                  </span>
+                <div className="mt-3 p-4 bg-gradient-to-b from-[#0a0e14] to-black/80 border border-blue-500/30 rounded-2xl space-y-3.5 shadow-xl animate-fade-in">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded-lg bg-blue-950/60 text-blue-400 border border-blue-500/30">
+                        <QrCode className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-mono uppercase tracking-wider font-bold text-blue-200">
+                          Store Payment QR
+                        </h4>
+                        <p className="text-[10px] text-[#78837c] font-mono">
+                          Customer scans to pay ₹{cartTotal}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      {activeQrSrc && (
+                        <button
+                          type="button"
+                          onClick={() => setIsQrModalOpen(true)}
+                          className="px-2 py-1 text-xs text-blue-300 hover:text-white bg-blue-950/60 hover:bg-blue-900/60 rounded-lg border border-blue-500/30 transition active:scale-95 flex items-center gap-1 font-mono font-semibold"
+                          title="Enlarge QR for customer"
+                        >
+                          <Maximize2 className="w-3.5 h-3.5" />
+                          <span className="hidden sm:inline text-[11px]">Enlarge</span>
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setTempUpiId(storeUpiId);
+                          setIsQrConfigOpen(true);
+                        }}
+                        className="px-2.5 py-1 text-xs font-mono font-bold text-[#aab4ad] hover:text-[#dfe7e0] bg-white/[0.05] hover:bg-white/[0.1] rounded-lg border border-white/10 transition active:scale-95 flex items-center gap-1"
+                        title="Upload or Change QR Code"
+                      >
+                        <Edit3 className="w-3.5 h-3.5 text-[#c9a24a]" />
+                        <span>{activeQrSrc ? 'Edit QR' : 'Upload QR'}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {activeQrSrc ? (
+                    <div className="flex flex-col items-center justify-center p-3.5 bg-white rounded-xl shadow-lg border border-white/20">
+                      <img
+                        src={activeQrSrc}
+                        alt="Store UPI QR"
+                        onClick={() => setIsQrModalOpen(true)}
+                        className="w-44 h-44 object-contain rounded-lg cursor-pointer hover:scale-[1.02] transition-transform"
+                        title="Click to view large for customer"
+                      />
+                      <div className="mt-2 text-center text-slate-900">
+                        <div className="text-base font-black font-mono tracking-tight text-slate-900">
+                          ₹{cartTotal}
+                        </div>
+                        {storeUpiId && (
+                          <div className="text-xs font-mono font-bold text-slate-700">
+                            UPI: {storeUpiId}
+                          </div>
+                        )}
+                        <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                          Scan with PhonePe • Google Pay • Paytm • BHIM
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => {
+                        setTempUpiId(storeUpiId);
+                        setIsQrConfigOpen(true);
+                      }}
+                      className="border-2 border-dashed border-white/20 hover:border-blue-400/50 bg-black/40 hover:bg-blue-950/20 p-5 rounded-xl text-center cursor-pointer transition-all duration-200 group"
+                    >
+                      <UploadCloud className="w-8 h-8 mx-auto text-[#c9a24a] group-hover:scale-110 transition-transform mb-2 opacity-80" />
+                      <p className="text-xs font-bold text-[#dfe7e0]">Upload Store QR Code</p>
+                      <p className="text-[11px] text-[#78837c] mt-1 max-w-xs mx-auto">
+                        Upload your PhonePe / Paytm / GPay QR image so customers can scan and pay directly on screen.
+                      </p>
+                      <span className="inline-flex items-center gap-1 mt-2.5 px-3 py-1 bg-blue-950/60 text-blue-300 border border-blue-500/30 rounded-lg text-xs font-mono font-bold">
+                        + Set Up QR Code
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="p-2.5 bg-black/40 rounded-xl border border-white/5 text-[11px] text-[#aab4ad] flex items-center justify-between">
+                    <span>Soundbox verification:</span>
+                    <span className="text-emerald-400 font-mono font-bold">Confirm alert before bill</span>
+                  </div>
                 </div>
               )}
             </div>
@@ -743,6 +887,166 @@ export default function Billing({
           </div>
         </div>
       </div>
+      {/* Modal 1: Customer View Enlarge QR Modal */}
+      {isQrModalOpen && activeQrSrc && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="bg-[#0a0e14] border border-blue-500/40 rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 animate-scale-up text-center">
+            <div className="flex items-center justify-between pb-2 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <QrCode className="w-5 h-5 text-blue-400" />
+                <h3 className="font-extrabold text-sm uppercase tracking-wider text-[#dfe7e0]">
+                  Scan to Pay
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsQrModalOpen(false)}
+                className="p-1.5 text-[#78837c] hover:text-[#dfe7e0] rounded-lg transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl shadow-xl flex flex-col items-center">
+              <img
+                src={activeQrSrc}
+                alt="Store UPI QR Code"
+                className="w-64 h-64 object-contain rounded-lg"
+              />
+              <div className="mt-3 text-center">
+                <span className="text-xs font-mono uppercase tracking-wider text-slate-500 block">Total Amount</span>
+                <span className="text-3xl font-black font-mono text-slate-900">{formatRupees(cartTotal)}</span>
+                {storeUpiId && (
+                  <p className="text-xs font-mono font-bold text-slate-700 mt-1">UPI: {storeUpiId}</p>
+                )}
+              </div>
+            </div>
+
+            <p className="text-xs text-[#aab4ad] leading-relaxed">
+              Customer can scan with <strong>PhonePe, Google Pay, Paytm</strong>, or any UPI app to complete the transaction.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setIsQrModalOpen(false)}
+              className="w-full py-3 btn-vermilion rounded-xl text-xs font-bold uppercase tracking-wider transition active:scale-95"
+            >
+              Done / Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal 2: Store Owner QR Code Configuration Modal */}
+      {isQrConfigOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="bg-[#0a0e14] border border-white/15 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-scale-up">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <QrCode className="w-5 h-5 text-[#c9a24a]" />
+                <h3 className="font-extrabold text-sm sm:text-base uppercase tracking-wider text-[#dfe7e0]">
+                  Configure Store QR Code
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsQrConfigOpen(false)}
+                className="p-1.5 text-[#78837c] hover:text-[#dfe7e0] rounded-lg transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Hidden File Input */}
+            <input
+              type="file"
+              ref={qrFileInputRef}
+              onChange={handleQrImageUpload}
+              accept="image/*"
+              className="hidden"
+            />
+
+            {/* Option 1: Upload QR Image */}
+            <div className="space-y-2">
+              <label className="block text-xs font-mono uppercase tracking-wider text-[#aab4ad] font-semibold">
+                1. Upload Store QR Code Image
+              </label>
+              <div className="flex items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => qrFileInputRef.current?.click()}
+                  className="flex-1 py-3 px-4 btn-secondary text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-2"
+                >
+                  <UploadCloud className="w-4 h-4 text-[#c9a24a]" />
+                  <span>{storeQrImage ? 'Replace QR Image' : 'Select QR Image File'}</span>
+                </button>
+                {storeQrImage && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveQrImage}
+                    className="p-3 bg-red-950/40 hover:bg-red-950/70 text-red-300 border border-red-500/30 rounded-xl transition"
+                    title="Remove uploaded image"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+              <p className="text-[11px] text-[#78837c] font-mono">
+                Upload screenshot or photo of your official PhonePe, Paytm, or GPay QR stand.
+              </p>
+            </div>
+
+            <div className="relative flex py-1 items-center">
+              <div className="flex-grow border-t border-white/10"></div>
+              <span className="flex-shrink mx-3 text-[10px] font-mono text-[#78837c] uppercase">Or enter UPI ID</span>
+              <div className="flex-grow border-t border-white/10"></div>
+            </div>
+
+            {/* Option 2: Enter UPI ID */}
+            <form onSubmit={handleSaveUpiId} className="space-y-3">
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wider text-[#aab4ad] mb-1.5 font-semibold">
+                  2. Store UPI ID / VPA
+                </label>
+                <input
+                  type="text"
+                  value={tempUpiId}
+                  onChange={(e) => setTempUpiId(e.target.value)}
+                  placeholder="e.g. 9828012345@paytm or store@okhdfcbank"
+                  className="w-full px-3.5 py-2.5 bg-black/50 border border-white/15 rounded-xl text-sm font-mono text-[#dfe7e0] focus:outline-none focus:border-[#e0231c]"
+                />
+              </div>
+
+              {/* Preview if active */}
+              {activeQrSrc && (
+                <div className="p-3 bg-white/5 rounded-xl border border-white/10 flex items-center gap-3">
+                  <img src={activeQrSrc} alt="Preview" className="w-14 h-14 bg-white p-1 rounded-lg object-contain shrink-0" />
+                  <div className="text-xs">
+                    <span className="text-emerald-400 font-bold block font-mono">QR Code Ready</span>
+                    <span className="text-[#aab4ad] text-[11px]">Customers can scan and pay right on screen.</span>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsQrConfigOpen(false)}
+                  className="flex-1 py-2.5 px-3 bg-white/[0.04] hover:bg-white/[0.08] text-[#aab4ad] text-xs font-mono font-semibold rounded-xl border border-white/10 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 px-3 btn-vermilion text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition"
+                >
+                  Save Settings
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -255,9 +255,9 @@ export default function CustomerUdhaar({
                         {customer.name}
                       </td>
 
-                      {/* Clickable Phone (tel:) */}
+                      {/* Clickable Phone (tel:) - Only if entered by user */}
                       <td className="py-3.5 px-4">
-                        {customer.phone ? (
+                        {customer.phone && customer.phone.trim() ? (
                           <a
                             href={`tel:${customer.phone.replace(/[\s-]/g, '')}`}
                             className="inline-flex items-center gap-1.5 font-mono text-xs sm:text-sm text-[#aab4ad] hover:text-[#dfe7e0] bg-white/[0.03] hover:bg-white/[0.08] px-2.5 py-1 rounded-lg border border-white/10 transition-colors"
@@ -267,7 +267,7 @@ export default function CustomerUdhaar({
                             <span>{customer.phone}</span>
                           </a>
                         ) : (
-                          <span className="text-[#78837c] italic font-mono text-xs">No phone</span>
+                          <span className="text-[#78837c] font-mono text-xs">—</span>
                         )}
                       </td>
 

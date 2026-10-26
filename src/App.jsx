@@ -28,7 +28,7 @@ import {
   clearAllData,
 } from './services/dataService';
 
-import { getLocalUser, logoutUser } from './services/supabaseClient';
+import { getLocalUser, logoutUser, getSupabase, isSupabaseConfigured, setLocalUser } from './services/supabaseClient';
 
 export default function App() {
   // Theme State ('dark' | 'light')
@@ -111,6 +111,31 @@ export default function App() {
       refreshData();
     }
   }, [currentUser, refreshData]);
+
+  // Listen for Supabase email confirmation link redirect
+  useEffect(() => {
+    const client = getSupabase();
+    if (client && isSupabaseConfigured()) {
+      const { data: authListener } = client.auth.onAuthStateChange((event, session) => {
+        if (session?.user && (event === 'SIGNED_IN' || event === 'USER_UPDATED')) {
+          const user = {
+            id: session.user.id,
+            email: session.user.email,
+            shopName: session.user.user_metadata?.shop_name || 'TechStore',
+            phone: session.user.user_metadata?.phone || '',
+            isSupabase: true,
+          };
+          setLocalUser(user);
+          setCurrentUser(user);
+          refreshData();
+          showToast(`Email confirmed! Welcome to ${user.shopName}.`, 'success');
+        }
+      });
+      return () => {
+        authListener?.subscription?.unsubscribe();
+      };
+    }
+  }, [refreshData, showToast]);
 
   // Auth Handlers
   const handleLoginSuccess = () => {
