@@ -8,58 +8,49 @@ import {
   Mail,
   ShieldCheck,
   ChevronRight,
-  Sparkles,
 } from 'lucide-react';
 import { getShopProfile } from '../services/dataService';
 
 export default function Sidebar({ activeSection, onSelectSection }) {
   const shop = getShopProfile();
 
-  // Navigation sections with numeric shortcut hints
   const navItems = [
     {
       id: 'dashboard',
-      name: 'Dashboard',
+      name: 'Sanctuary Overview',
+      subtitle: 'Live Stats & Command',
       icon: LayoutDashboard,
-      description: 'Live Stats & Overview',
       shortcut: '1',
     },
     {
       id: 'products',
-      name: 'Products',
+      name: 'Inventory Vault',
+      subtitle: 'Stock & Margin Control',
       icon: Package,
-      description: 'Inventory & Stock Alert',
       shortcut: '2',
     },
     {
       id: 'billing',
-      name: 'Billing',
+      name: 'Billing Counter',
+      subtitle: 'Point of Sale & Invoices',
       icon: ShoppingCart,
-      description: 'Point of Sale & Invoices',
       shortcut: '3',
     },
     {
       id: 'udhaar',
-      name: 'Customer Udhaar',
+      name: 'Ledger of Honor',
+      subtitle: 'Customer Udhaar Khata',
       icon: Users,
-      description: 'Credit Ledger & Passbook',
       shortcut: '4',
-    },
-    {
-      id: 'experience',
-      name: '3D World',
-      icon: Sparkles,
-      description: 'Kage Temple Experience',
-      shortcut: '5',
     },
   ];
 
   return (
-    <aside className="no-print hidden md:flex flex-col w-64 bg-white border-r border-slate-200/80 shrink-0 min-h-[calc(100vh-4rem)]">
-      <div className="p-4 flex-1 space-y-2">
-        <div className="px-3 pt-2 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center justify-between">
-          <span>Navigation</span>
-          <span className="text-[9px] font-normal text-slate-400">Shortcuts</span>
+    <aside className="no-print hidden md:flex flex-col w-64 bg-[#05070a]/75 backdrop-blur-md border-r border-white/10 shrink-0 min-h-[calc(100vh-4.5rem)]">
+      <div className="p-4 flex-1 space-y-3">
+        <div className="px-3 pt-2 pb-1 text-[9px] font-mono uppercase tracking-[0.25em] text-[#78837c] flex items-center justify-between">
+          <span>PAVILIONS</span>
+          <span>KEY</span>
         </div>
 
         <nav className="space-y-1.5" aria-label="Main Navigation">
@@ -71,30 +62,26 @@ export default function Sidebar({ activeSection, onSelectSection }) {
               <button
                 key={item.id}
                 onClick={() => onSelectSection(item.id)}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl font-medium text-sm transition-all duration-150 group text-left ${
+                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl font-medium text-xs transition-all duration-200 group text-left ${
                   isActive
-                    ? 'bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-sm shadow-emerald-700/25 font-semibold'
-                    : 'text-slate-600 hover:bg-slate-100/70 hover:text-slate-900 active:scale-[0.99]'
+                    ? 'bg-gradient-to-r from-[#e0231c]/25 via-red-950/30 to-transparent text-[#dfe7e0] border border-[#e0231c]/50 shadow-[0_0_15px_rgba(224,35,28,0.15)] font-semibold'
+                    : 'text-[#aab4ad] hover:bg-white/[0.04] hover:text-[#dfe7e0] border border-transparent active:scale-[0.99]'
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div
-                    className={`p-1.5 rounded-lg transition-colors ${
+                    className={`p-2 rounded-lg transition-colors ${
                       isActive
-                        ? 'bg-white/15 text-white'
-                        : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200/80 group-hover:text-slate-800'
+                        ? 'bg-[#e0231c] text-white shadow-md shadow-red-950/60'
+                        : 'bg-white/[0.05] text-[#78837c] group-hover:text-[#dfe7e0] group-hover:bg-white/[0.08]'
                     }`}
                   >
                     <Icon className="w-4 h-4 shrink-0" />
                   </div>
                   <div className="min-w-0">
-                    <div className="leading-tight truncate">{item.name}</div>
-                    <div
-                      className={`text-[11px] truncate mt-0.5 ${
-                        isActive ? 'text-emerald-100 font-normal' : 'text-slate-400'
-                      }`}
-                    >
-                      {item.description}
+                    <div className="leading-tight truncate text-[#dfe7e0] text-xs font-semibold">{item.name}</div>
+                    <div className={`text-[10px] truncate mt-0.5 font-mono ${isActive ? 'text-red-300' : 'text-[#78837c]'}`}>
+                      {item.subtitle}
                     </div>
                   </div>
                 </div>
@@ -102,8 +89,8 @@ export default function Sidebar({ activeSection, onSelectSection }) {
                 <span
                   className={`text-[10px] font-mono px-1.5 py-0.5 rounded border transition-colors ${
                     isActive
-                      ? 'bg-white/20 text-white border-white/20'
-                      : 'bg-slate-50 text-slate-400 border-slate-200/80 group-hover:border-slate-300'
+                      ? 'bg-[#e0231c]/20 text-red-200 border-[#e0231c]/40'
+                      : 'bg-black/30 text-[#78837c] border-white/10 group-hover:border-white/20'
                   }`}
                 >
                   {item.shortcut}
@@ -114,34 +101,34 @@ export default function Sidebar({ activeSection, onSelectSection }) {
         </nav>
       </div>
 
-      {/* Clickable Support & Security Footer Card */}
-      <div className="p-3 m-3.5 border border-slate-200/80 rounded-xl bg-slate-50/60 text-xs text-slate-600 space-y-2 shadow-2xs">
+      {/* Support & Security Card */}
+      <div className="p-3.5 m-3.5 border border-white/10 rounded-xl bg-black/40 text-xs text-[#aab4ad] space-y-2 backdrop-blur-sm shadow-inner">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 font-semibold text-slate-800 text-[11px]">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Store POS Terminal</span>
+          <div className="flex items-center gap-1.5 font-semibold text-[#dfe7e0] text-[11px] tracking-wide">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#c9a24a]" />
+            <span>Encrypted POS Terminal</span>
           </div>
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Terminal Online"></span>
+          <span className="w-2 h-2 rounded-full bg-[#e0231c] animate-pulse" title="System Online"></span>
         </div>
 
-        <div className="space-y-1.5 pt-1.5 border-t border-slate-200/70 text-[11px]">
+        <div className="space-y-1.5 pt-2 border-t border-white/10 text-[11px]">
           {shop.phone && (
             <a
               href={`tel:${shop.phone.replace(/[\s-]/g, '')}`}
-              className="flex items-center gap-1.5 text-slate-600 hover:text-emerald-700 transition"
+              className="flex items-center gap-1.5 text-[#78837c] hover:text-[#dfe7e0] transition"
               title="Call store phone"
             >
-              <Phone className="w-3 h-3 text-emerald-600 shrink-0" />
+              <Phone className="w-3 h-3 text-[#c9a24a] shrink-0" />
               <span className="font-mono">{shop.phone}</span>
             </a>
           )}
           <a
             href="mailto:support@techstore.in"
-            className="flex items-center gap-1.5 text-slate-600 hover:text-emerald-700 transition"
+            className="flex items-center gap-1.5 text-[#78837c] hover:text-[#dfe7e0] transition"
             title="Email store support"
           >
-            <Mail className="w-3 h-3 text-emerald-600 shrink-0" />
-            <span className="truncate">support@techstore.in</span>
+            <Mail className="w-3 h-3 text-[#e0231c] shrink-0" />
+            <span className="font-mono truncate">support@techstore.in</span>
           </a>
         </div>
       </div>

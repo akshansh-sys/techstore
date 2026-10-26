@@ -12,21 +12,21 @@ export default function Footer({ onNavigate, currentUser }) {
       : shop.name || 'Apna General Store';
 
   return (
-    <footer className="no-print bg-white border-t border-slate-200 mt-auto text-xs text-slate-500">
+    <footer className="no-print bg-[#05070a]/90 backdrop-blur-md border-t border-white/10 mt-auto text-xs text-[#78837c] relative z-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
           {/* Col 1: Store Info */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
-              <Store className="w-4 h-4 text-emerald-600" />
+            <div className="flex items-center gap-2 text-[#dfe7e0] font-bold text-sm uppercase tracking-wider">
+              <Store className="w-4 h-4 text-[#e0231c]" />
               <span>{storeDisplayName}</span>
             </div>
-            <p className="text-slate-500 text-[11px] leading-relaxed">
-              {shop.tagline || 'Daily Essentials, Kirana & Retail Store POS Management'}
+            <p className="text-[#aab4ad] text-[11px] leading-relaxed">
+              {shop.tagline || 'Daily Essentials, Kirana & Retail POS Management Sanctuary'}
             </p>
             {shop.address && (
-              <p className="flex items-start gap-1.5 text-slate-500 text-[11px]">
-                <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+              <p className="flex items-start gap-1.5 text-[#78837c] text-[11px] font-mono">
+                <MapPin className="w-3.5 h-3.5 text-[#78837c] shrink-0 mt-0.5" />
                 <span>{shop.address}</span>
               </p>
             )}
@@ -34,33 +34,33 @@ export default function Footer({ onNavigate, currentUser }) {
 
           {/* Col 2: Quick Navigation */}
           <div>
-            <h4 className="font-semibold text-slate-800 text-xs uppercase tracking-wider mb-2.5">
-              Store Sections
+            <h4 className="font-mono font-medium text-[#dfe7e0] text-[10px] uppercase tracking-[0.2em] mb-2.5">
+              Store Pavilions
             </h4>
-            <ul className="space-y-1.5">
+            <ul className="space-y-1.5 text-xs font-mono">
               <li>
                 <button
                   type="button"
                   onClick={() => onNavigate('dashboard')}
-                  className="hover:text-emerald-700 transition"
+                  className="hover:text-[#dfe7e0] transition"
                 >
-                  Dashboard Overview
+                  Sanctuary Overview
                 </button>
               </li>
               <li>
                 <button
                   type="button"
                   onClick={() => onNavigate('products')}
-                  className="hover:text-emerald-700 transition"
+                  className="hover:text-[#dfe7e0] transition"
                 >
-                  Products & Stock
+                  Inventory Vault
                 </button>
               </li>
               <li>
                 <button
                   type="button"
                   onClick={() => onNavigate('billing')}
-                  className="hover:text-emerald-700 transition"
+                  className="hover:text-[#dfe7e0] transition"
                 >
                   Billing Counter (POS)
                 </button>
@@ -69,18 +69,9 @@ export default function Footer({ onNavigate, currentUser }) {
                 <button
                   type="button"
                   onClick={() => onNavigate('udhaar')}
-                  className="hover:text-emerald-700 transition"
+                  className="hover:text-[#dfe7e0] transition"
                 >
                   Customer Udhaar Ledger
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('experience')}
-                  className="hover:text-emerald-700 transition font-medium text-emerald-800"
-                >
-                  3D Temple Experience ✨
                 </button>
               </li>
             </ul>
@@ -88,7 +79,7 @@ export default function Footer({ onNavigate, currentUser }) {
 
           {/* Col 3: Clickable Contacts */}
           <div>
-            <h4 className="font-semibold text-slate-800 text-xs uppercase tracking-wider mb-2.5">
+            <h4 className="font-mono font-medium text-[#dfe7e0] text-[10px] uppercase tracking-[0.2em] mb-2.5">
               Direct Contact
             </h4>
             <ul className="space-y-2">
@@ -96,11 +87,11 @@ export default function Footer({ onNavigate, currentUser }) {
                 <li>
                   <a
                     href={`tel:${shop.phone.replace(/[\s-]/g, '')}`}
-                    className="flex items-center gap-1.5 text-slate-600 hover:text-emerald-700 font-medium transition"
+                    className="flex items-center gap-1.5 text-[#aab4ad] hover:text-[#dfe7e0] transition"
                     title="Tap to call phone"
                   >
-                    <Phone className="w-3.5 h-3.5 text-emerald-600" />
-                    <span className="font-mono">{shop.phone}</span>
+                    <Phone className="w-3.5 h-3.5 text-[#c9a24a]" />
+                    <span className="font-mono text-xs">{shop.phone}</span>
                   </a>
                 </li>
               )}
@@ -108,20 +99,20 @@ export default function Footer({ onNavigate, currentUser }) {
                 <li>
                   <a
                     href={`mailto:${currentUser.email}`}
-                    className="flex items-center gap-1.5 text-slate-600 hover:text-emerald-700 font-medium transition truncate"
+                    className="flex items-center gap-1.5 text-[#aab4ad] hover:text-[#dfe7e0] transition truncate"
                     title="Tap to send email"
                   >
-                    <Mail className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span className="truncate">{currentUser.email}</span>
+                    <Mail className="w-3.5 h-3.5 text-[#e0231c] shrink-0" />
+                    <span className="font-mono text-xs truncate">{currentUser.email}</span>
                   </a>
                 </li>
               )}
               <li>
                 <a
                   href="mailto:support@techstore.in"
-                  className="flex items-center gap-1.5 text-slate-500 hover:text-emerald-700 transition truncate"
+                  className="flex items-center gap-1.5 text-[#78837c] hover:text-[#dfe7e0] transition truncate font-mono text-xs"
                 >
-                  <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <Mail className="w-3.5 h-3.5 text-[#78837c] shrink-0" />
                   <span>support@techstore.in</span>
                 </a>
               </li>
@@ -130,17 +121,17 @@ export default function Footer({ onNavigate, currentUser }) {
 
           {/* Col 4: Data Security & Help */}
           <div>
-            <h4 className="font-semibold text-slate-800 text-xs uppercase tracking-wider mb-2.5">
-              Data & Privacy
+            <h4 className="font-mono font-medium text-[#dfe7e0] text-[10px] uppercase tracking-[0.2em] mb-2.5">
+              Data & Security
             </h4>
-            <ul className="space-y-1.5">
+            <ul className="space-y-1.5 text-xs font-mono">
               <li>
                 <button
                   type="button"
                   onClick={() => setActiveModal('privacy')}
-                  className="flex items-center gap-1.5 text-slate-600 hover:text-emerald-700 transition"
+                  className="flex items-center gap-1.5 text-[#aab4ad] hover:text-[#dfe7e0] transition"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#c9a24a]" />
                   <span>Offline Storage Policy</span>
                 </button>
               </li>
@@ -148,19 +139,19 @@ export default function Footer({ onNavigate, currentUser }) {
                 <button
                   type="button"
                   onClick={() => setActiveModal('help')}
-                  className="flex items-center gap-1.5 text-slate-600 hover:text-emerald-700 transition"
+                  className="flex items-center gap-1.5 text-[#aab4ad] hover:text-[#dfe7e0] transition"
                 >
-                  <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Kirana POS Help Guide</span>
+                  <HelpCircle className="w-3.5 h-3.5 text-[#78837c]" />
+                  <span>Sanctuary POS Guide</span>
                 </button>
               </li>
               <li>
                 <button
                   type="button"
                   onClick={() => onNavigate('notfound-demo')}
-                  className="text-slate-400 hover:text-slate-600 transition"
+                  className="text-[#78837c] hover:text-[#aab4ad] transition"
                 >
-                  View 404 Error Page
+                  View 404 Page
                 </button>
               </li>
             </ul>
@@ -168,12 +159,12 @@ export default function Footer({ onNavigate, currentUser }) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-400 text-[11px]">
-          <p>© {new Date().getFullYear()} {storeDisplayName} • All rights reserved</p>
+        <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-[#78837c] text-[11px] font-mono">
+          <p>© {new Date().getFullYear()} {storeDisplayName} • Kage 3D Temple POS</p>
           <div className="flex items-center gap-4">
-            <span className="inline-flex items-center gap-1 text-emerald-700 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              Secure Offline POS
+            <span className="inline-flex items-center gap-1.5 text-red-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#e0231c] animate-pulse"></span>
+              Secure Offline Engine
             </span>
             <span>Asia/Kolkata (IST)</span>
           </div>
@@ -182,39 +173,39 @@ export default function Footer({ onNavigate, currentUser }) {
 
       {/* Privacy Policy Modal */}
       {activeModal === 'privacy' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200/80 animate-scale-up">
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
-              <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="bg-[#0a0e12] rounded-2xl max-w-md w-full p-6 shadow-2xl border border-white/15 animate-scale-up text-[#dfe7e0]">
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
+              <h3 className="font-bold text-sm uppercase tracking-wider text-[#dfe7e0] flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#c9a24a]" />
                 <span>Offline Data & Privacy Policy</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg transition"
+                className="p-1 text-[#78837c] hover:text-[#dfe7e0] rounded-lg transition"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="text-xs text-slate-600 space-y-2.5 leading-relaxed">
+            <div className="text-xs text-[#aab4ad] space-y-2.5 leading-relaxed font-light">
               <p>
-                <strong>100% Local Control:</strong> Your products, completed bills, customer directory, and udhaar balances are saved directly within your browser's persistent storage.
+                <strong className="text-[#dfe7e0]">Local Sovereignty:</strong> Your items, sales records, customer directories, and udhaar balances reside securely in your browser's persistent client storage.
               </p>
               <p>
-                <strong>No Third-Party Tracking:</strong> No external trackers or advertisements are embedded. Your customer transactions remain strictly confidential to your store.
+                <strong className="text-[#dfe7e0]">Zero External Tracking:</strong> No tracking telemetry or advertisements are embedded. Your commercial transactions remain strictly private.
               </p>
               <p>
-                <strong>Cloud Backups:</strong> When connected to Supabase, your owner credentials and authentication remain encrypted with industry standard Row-Level Security.
+                <strong className="text-[#dfe7e0]">Cloud Protection:</strong> When connected to Supabase, merchant authentication is guarded with standard Row-Level Security.
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100 flex justify-end">
+            <div className="mt-5 pt-3 border-t border-white/10 flex justify-end">
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-semibold rounded-xl text-xs transition shadow-sm"
+                className="px-4 py-2 btn-vermilion font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm"
               >
-                Got It
+                Understood
               </button>
             </div>
           </div>
@@ -223,32 +214,32 @@ export default function Footer({ onNavigate, currentUser }) {
 
       {/* POS Help Modal */}
       {activeModal === 'help' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200/80 animate-scale-up">
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
-              <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <HelpCircle className="w-4 h-4 text-emerald-600" />
-                <span>Kirana POS Quick Guide</span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="bg-[#0a0e12] rounded-2xl max-w-md w-full p-6 shadow-2xl border border-white/15 animate-scale-up text-[#dfe7e0]">
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
+              <h3 className="font-bold text-sm uppercase tracking-wider text-[#dfe7e0] flex items-center gap-2">
+                <HelpCircle className="w-4 h-4 text-[#e0231c]" />
+                <span>Sanctuary POS Guide</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg transition"
+                className="p-1 text-[#78837c] hover:text-[#dfe7e0] rounded-lg transition"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="text-xs text-slate-600 space-y-2 leading-relaxed">
-              <p>• <strong>Products:</strong> Add items, purchase rate, selling price, and set low-stock thresholds.</p>
-              <p>• <strong>Billing:</strong> Search product by name to see instant recommendations, add to cart, and print clean customer receipts.</p>
-              <p>• <strong>Udhaar:</strong> Record debit purchases and partial cash/UPI repayments with an audit passbook.</p>
-              <p>• <strong>Phone Links:</strong> Tap any phone number to place a direct phone call from your smartphone.</p>
+            <div className="text-xs text-[#aab4ad] space-y-2 leading-relaxed font-light">
+              <p>• <strong className="text-[#dfe7e0]">Products:</strong> Catalog items, purchase cost, selling price, and low-stock threshold triggers.</p>
+              <p>• <strong className="text-[#dfe7e0]">Billing:</strong> Real-time search with recommendations, quick additions, and clean receipt printing.</p>
+              <p>• <strong className="text-[#dfe7e0]">Udhaar:</strong> Record debits and cash/UPI repayments with an immutable passbook ledger.</p>
+              <p>• <strong className="text-[#dfe7e0]">Phone Calling:</strong> Click any phone link to place an immediate phone call.</p>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100 flex justify-end">
+            <div className="mt-5 pt-3 border-t border-white/10 flex justify-end">
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-semibold rounded-xl text-xs transition shadow-sm"
+                className="px-4 py-2 btn-vermilion font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-sm"
               >
                 Close Guide
               </button>

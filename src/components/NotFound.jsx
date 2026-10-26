@@ -6,25 +6,25 @@ export default function NotFound({ onNavigate }) {
   const shop = getShopProfile();
 
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center p-4 text-center animate-fade-in">
-      <div className="bg-white rounded-3xl p-8 sm:p-12 max-w-lg w-full border border-slate-200/80 shadow-2xl shadow-slate-200/60 space-y-6 animate-scale-up">
-        {/* Visual 404 Illustration */}
+    <div className="min-h-[70vh] flex flex-col items-center justify-center p-4 text-center animate-fade-in text-[#dfe7e0]">
+      <div className="kage-card p-8 sm:p-12 max-w-lg w-full border border-white/15 shadow-[0_15px_60px_rgba(0,0,0,0.9)] space-y-6 animate-scale-up">
+        {/* Visual 404 Seal */}
         <div className="relative inline-block">
-          <div className="w-24 h-24 rounded-3xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto shadow-inner border border-emerald-100">
+          <div className="w-24 h-24 rounded-3xl bg-white/[0.04] text-[#e0231c] flex items-center justify-center mx-auto border border-white/10 shadow-inner">
             <Store className="w-12 h-12 stroke-[1.5]" />
           </div>
-          <span className="absolute -bottom-2 -right-2 px-2.5 py-0.5 bg-rose-600 text-white font-extrabold text-xs rounded-full shadow-md">
+          <span className="absolute -bottom-2 -right-2 px-2.5 py-0.5 bg-[#e0231c] text-white font-mono font-bold text-xs rounded-full shadow-lg">
             404
           </span>
         </div>
 
         {/* Text */}
         <div className="space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            Page Not Found
+          <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wide text-[#dfe7e0]">
+            Pavilion Not Found
           </h2>
-          <p className="text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
-            Oops! The section you are trying to visit does not exist or may have been moved.
+          <p className="text-xs text-[#aab4ad] max-w-sm mx-auto leading-relaxed font-light">
+            The sanctuary pavilion you are trying to visit does not exist or may have been relocated.
           </p>
         </div>
 
@@ -33,25 +33,25 @@ export default function NotFound({ onNavigate }) {
           <button
             type="button"
             onClick={() => onNavigate('dashboard')}
-            className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition shadow-md active:scale-95"
+            className="inline-flex items-center justify-center gap-2 px-5 py-3 btn-vermilion font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-md active:scale-95"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Back to Dashboard</span>
+            <span>Return to Sanctuary</span>
           </button>
 
           <button
             type="button"
             onClick={() => onNavigate('billing')}
-            className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-sm rounded-xl transition"
+            className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white/[0.06] hover:bg-white/[0.12] text-[#dfe7e0] font-mono text-xs uppercase tracking-wider rounded-xl border border-white/10 transition"
           >
-            <ShoppingCart className="w-4 h-4" />
-            <span>Open Billing Counter</span>
+            <ShoppingCart className="w-4 h-4 text-[#c9a24a]" />
+            <span>Open POS Counter</span>
           </button>
         </div>
 
         {/* Help & Support Clickable Contact */}
-        <div className="pt-6 border-t border-slate-100 text-xs text-slate-500 space-y-2">
-          <div className="flex items-center justify-center gap-1.5 text-slate-400">
+        <div className="pt-6 border-t border-white/10 text-xs text-[#78837c] space-y-2 font-mono">
+          <div className="flex items-center justify-center gap-1.5 text-[#78837c]">
             <HelpCircle className="w-3.5 h-3.5" />
             <span>Need assistance with your store POS?</span>
           </div>
@@ -59,7 +59,7 @@ export default function NotFound({ onNavigate }) {
             {shop.phone && (
               <a
                 href={`tel:${shop.phone.replace(/[\s-]/g, '')}`}
-                className="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-800 font-semibold transition"
+                className="inline-flex items-center gap-1 text-[#c9a24a] hover:text-[#dfe7e0] transition"
               >
                 <Phone className="w-3.5 h-3.5" />
                 <span>{shop.phone}</span>
@@ -67,7 +67,7 @@ export default function NotFound({ onNavigate }) {
             )}
             <a
               href="mailto:support@techstore.in"
-              className="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-800 font-semibold transition"
+              className="inline-flex items-center gap-1 text-red-400 hover:text-red-300 transition"
             >
               <Mail className="w-3.5 h-3.5" />
               <span>support@techstore.in</span>

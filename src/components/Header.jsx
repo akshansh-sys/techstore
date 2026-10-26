@@ -6,8 +6,10 @@ import {
   LogOut,
   Mail,
   Phone,
-  Circle,
-  Sparkles,
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  Users,
 } from 'lucide-react';
 import { getShopProfile } from '../services/dataService';
 
@@ -16,6 +18,7 @@ export default function Header({
   currentUser,
   onLogout,
   onNavigate,
+  activeSection = 'dashboard',
 }) {
   const shop = getShopProfile();
   const [timeString, setTimeString] = useState('');
@@ -26,7 +29,7 @@ export default function Header({
       ? currentUser.shopName.trim()
       : shop.name || 'Apna General Store';
 
-  // Keep a live clock in Asia/Kolkata time format
+  // Live Asia/Kolkata clock
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -48,46 +51,80 @@ export default function Header({
     return () => clearInterval(interval);
   }, []);
 
+  const navLinks = [
+    { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
+    { id: 'products', name: 'Products', icon: Package },
+    { id: 'billing', name: 'Billing', icon: ShoppingCart },
+    { id: 'udhaar', name: 'Udhaar', icon: Users },
+  ];
+
   return (
-    <header className="no-print bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        {/* Left: Clickable Store Brand & Logo */}
+    <header className="no-print bg-[#05070a]/85 backdrop-blur-md border-b border-[rgba(223,231,224,0.1)] sticky top-0 z-30 transition-all">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-4">
+        {/* Left: Kage Shrine Seal & Clickable Store Brand */}
         <button
           type="button"
           onClick={() => onNavigate && onNavigate('dashboard')}
-          className="flex items-center gap-3 text-left focus:outline-none group rounded-xl p-1 -ml-1 transition hover:bg-slate-50/80 active:scale-[0.99]"
-          title="Go to Dashboard"
+          className="flex items-center gap-3 text-left focus:outline-none group rounded-xl p-1.5 -ml-1 transition hover:bg-white/[0.04] active:scale-[0.99]"
+          title="Go to Dashboard Overview"
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 flex items-center justify-center text-white shadow-sm shadow-emerald-600/20 group-hover:shadow-md group-hover:shadow-emerald-600/30 transition-all duration-200 shrink-0">
-            <Store className="w-5 h-5 transition-transform duration-200 group-hover:scale-105" />
+          {/* Vermilion Shrine Seal Mark */}
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#e0231c] to-[#99140e] flex items-center justify-center text-white shadow-lg shadow-red-950/50 border border-[#ff5a3c]/30 group-hover:scale-105 transition-transform duration-300 shrink-0">
+            <Store className="w-5 h-5" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight truncate max-w-[160px] sm:max-w-xs md:max-w-sm">
+              <h1 className="text-sm sm:text-base font-bold text-[#dfe7e0] tracking-wider uppercase leading-tight truncate max-w-[150px] sm:max-w-xs">
                 {storeDisplayName}
               </h1>
-              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-mono uppercase tracking-widest bg-red-950/40 text-red-300 border border-red-500/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#e0231c] animate-pulse"></span>
                 <span>Active</span>
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 hidden sm:block truncate max-w-xs mt-0.5">
-              {shop.tagline || 'General Store & Daily Essentials'}
+            <p className="text-[10px] text-[#78837c] font-mono tracking-widest hidden sm:block truncate max-w-xs mt-0.5">
+              {shop.tagline || 'RETAIL POS SANCTUARY'}
             </p>
           </div>
         </button>
 
-        {/* Right: Contact Links, Live Time & Actions */}
+        {/* Center: Tracked Kage Section Nav Links (Desktop) */}
+        <nav className="hidden md:flex items-center gap-6 lg:gap-8" aria-label="Store Pavilions">
+          {navLinks.map((link) => {
+            const isActive = activeSection === link.id;
+            const Icon = link.icon;
+            return (
+              <button
+                key={link.id}
+                type="button"
+                onClick={() => onNavigate && onNavigate(link.id)}
+                className={`relative py-2 flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] font-medium transition-all duration-200 group ${
+                  isActive
+                    ? 'text-[#dfe7e0] font-bold'
+                    : 'text-[#78837c] hover:text-[#dfe7e0]'
+                }`}
+              >
+                <Icon className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-[#e0231c]' : 'text-[#78837c] group-hover:text-[#aab4ad]'}`} />
+                <span>{link.name}</span>
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#e0231c] to-transparent shadow-[0_0_8px_#e0231c]" />
+                )}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Right: Contacts, Live Time & Actions */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Clickable Store Phone */}
           {shop.phone && (
             <a
               href={`tel:${shop.phone.replace(/[\s-]/g, '')}`}
-              className="hidden lg:flex items-center gap-1.5 text-xs text-slate-600 hover:text-emerald-700 bg-slate-50 hover:bg-emerald-50/80 px-2.5 py-1.5 rounded-lg border border-slate-200/80 hover:border-emerald-300 transition-colors duration-150"
+              className="hidden lg:flex items-center gap-1.5 text-xs text-[#aab4ad] hover:text-[#dfe7e0] bg-white/[0.03] hover:bg-white/[0.08] px-2.5 py-1.5 rounded-lg border border-white/10 transition-colors"
               title={`Call Store: ${shop.phone}`}
             >
-              <Phone className="w-3.5 h-3.5 text-emerald-600" />
-              <span className="font-mono font-medium">{shop.phone}</span>
+              <Phone className="w-3.5 h-3.5 text-[#c9a24a]" />
+              <span className="font-mono text-[11px]">{shop.phone}</span>
             </a>
           )}
 
@@ -95,40 +132,29 @@ export default function Header({
           {currentUser?.email && (
             <a
               href={`mailto:${currentUser.email}`}
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 hover:bg-emerald-50/80 hover:text-emerald-800 border border-slate-200/80 hover:border-emerald-300 rounded-lg text-xs text-slate-700 transition-colors duration-150"
+              className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 bg-white/[0.03] hover:bg-white/[0.08] text-[#aab4ad] hover:text-[#dfe7e0] border border-white/10 rounded-lg text-xs transition-colors"
               title={`Send Email to: ${currentUser.email}`}
             >
-              <Mail className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-              <span className="font-medium max-w-[130px] truncate">{currentUser.email}</span>
+              <Mail className="w-3.5 h-3.5 text-[#e0231c] shrink-0" />
+              <span className="font-mono text-[11px] max-w-[120px] truncate">{currentUser.email}</span>
             </a>
           )}
 
-          {/* Live Date / Time in Asia/Kolkata */}
-          <div className="hidden xl:flex items-center gap-2 text-xs text-slate-600 bg-slate-100/80 px-3 py-1.5 rounded-lg border border-slate-200/80 shadow-2xs">
-            <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-            <span className="font-mono font-medium tracking-tight">{timeString || 'IST'}</span>
+          {/* Live IST Time */}
+          <div className="hidden sm:flex items-center gap-2 text-xs text-[#aab4ad] bg-black/40 px-3 py-1.5 rounded-lg border border-white/10 shadow-inner">
+            <Clock className="w-3.5 h-3.5 text-[#78837c] shrink-0" />
+            <span className="font-mono text-[11px] tracking-tight">{timeString || 'IST'}</span>
           </div>
-
-          {/* 3D Temple Experience Button */}
-          <button
-            type="button"
-            onClick={() => onNavigate && onNavigate('experience')}
-            title="Explore 3D Kage Temple Experience"
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-amber-900 bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 border border-amber-200/80 rounded-lg transition-all shadow-2xs hover:shadow-xs active:scale-95"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-            <span className="hidden sm:inline">3D World</span>
-          </button>
 
           {/* Reset / Clear Data Button */}
           <button
             type="button"
             onClick={onClearData}
             title="Reset store records"
-            className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-slate-500 hover:text-rose-700 hover:bg-rose-50 border border-slate-200/80 hover:border-rose-200 rounded-lg transition-colors active:scale-95"
+            className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-mono text-[#78837c] hover:text-red-400 bg-white/[0.02] hover:bg-red-950/20 border border-white/10 hover:border-red-900/40 rounded-lg transition-colors active:scale-95"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">Reset</span>
+            <span className="hidden md:inline text-[11px]">Reset</span>
           </button>
 
           {/* Logout Button */}
@@ -136,10 +162,10 @@ export default function Header({
             type="button"
             onClick={onLogout}
             title="Sign out of store"
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200/80 rounded-lg transition-all duration-150 shadow-2xs hover:shadow-xs active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#dfe7e0] bg-white/[0.06] hover:bg-red-950/30 hover:text-red-300 border border-white/10 hover:border-red-500/30 rounded-lg transition-all active:scale-95 shadow-sm"
           >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Logout</span>
+            <LogOut className="w-3.5 h-3.5 text-[#e0231c]" />
+            <span className="text-[11px]">Logout</span>
           </button>
         </div>
       </div>

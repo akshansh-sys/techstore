@@ -131,7 +131,6 @@ export default function Billing({
       ]);
     }
 
-    // Set as active selection too
     setSelectedProductId(product.id);
     showToast(`Added 1x "${product.name}" to bill`, 'success');
   };
@@ -152,7 +151,6 @@ export default function Billing({
       return;
     }
 
-    // Check existing quantity already in cart
     const existingIndex = cart.findIndex((i) => i.productId === selectedProduct.id);
     const alreadyInCart = existingIndex >= 0 ? cart[existingIndex].quantity : 0;
     const requestedTotalQty = alreadyInCart + qty;
@@ -187,7 +185,6 @@ export default function Billing({
       ]);
     }
 
-    // Reset selection input
     setSelectedProductId('');
     setSelectedQuantity(1);
     setProductSearch('');
@@ -242,7 +239,7 @@ export default function Billing({
       return;
     }
 
-    if (isSubmitting) return; // Prevent double submission
+    if (isSubmitting) return;
     setIsSubmitting(true);
     setErrorMessage('');
 
@@ -258,7 +255,6 @@ export default function Billing({
       };
 
       const completedBill = onCompleteSale(billData);
-      // Reset form
       setCart([]);
       setCustomerName('');
       setPaymentMethod('Cash');
@@ -272,37 +268,37 @@ export default function Billing({
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in text-[#dfe7e0]">
       {/* Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#dfe7e0] uppercase">
               Billing Counter (POS)
             </h2>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-              Fast Checkout
+            <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-red-950/50 text-red-300 border border-red-500/30">
+              Exchange Shrine
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Search items with auto-recommendations, adjust quantities, and print thermal bills
+          <p className="text-xs text-[#78837c] font-mono mt-1">
+            Search items with auto-recommendations, adjust quantities, and print thermal receipts
           </p>
         </div>
 
-        <div className="text-xs text-slate-500 font-mono bg-white px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-2xs self-start sm:self-auto">
+        <div className="text-xs text-[#78837c] font-mono bg-black/40 px-3 py-1.5 rounded-xl border border-white/10 shadow-inner self-start sm:self-auto">
           <span>{products.length} Items Available</span>
         </div>
       </div>
 
       {/* Error alert if any */}
       {errorMessage && (
-        <div className="flex items-start gap-3 p-3.5 bg-rose-50 border border-rose-300 text-rose-800 rounded-xl text-xs sm:text-sm animate-fade-in">
-          <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-3.5 bg-red-950/40 border border-red-500/40 text-red-200 rounded-xl text-xs sm:text-sm animate-fade-in shadow-lg">
+          <AlertCircle className="w-5 h-5 text-[#ff5a3c] shrink-0 mt-0.5" />
           <div className="flex-1 font-medium leading-relaxed">{errorMessage}</div>
           <button
             type="button"
             onClick={() => setErrorMessage('')}
-            className="text-xs text-rose-500 hover:text-rose-800 p-1"
+            className="text-xs text-red-400 hover:text-red-200 p-1"
           >
             <X className="w-4 h-4" />
           </button>
@@ -310,24 +306,24 @@ export default function Billing({
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Product Selector & Recommendations (5 cols on lg) */}
+        {/* Left Column: Product Selector & Recommendations */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card">
-            <h3 className="font-bold text-sm text-slate-900 mb-3 flex items-center justify-between">
+          <div className="kage-card p-5">
+            <h3 className="font-bold text-xs uppercase tracking-wider text-[#dfe7e0] mb-3 flex items-center justify-between">
               <span>Find & Select Items</span>
-              <span className="text-[11px] font-normal text-slate-400">
-                Type name or category
+              <span className="text-[10px] font-mono text-[#78837c]">
+                Live Search
               </span>
             </h3>
 
             {/* Smart Search with Recommendations Dropdown */}
             <div className="relative mb-3.5" ref={searchContainerRef}>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Product Search & Live Recommendations
+              <label className="block text-[10px] font-mono uppercase tracking-wider text-[#aab4ad] mb-1.5">
+                Item Search & Live Recommendations
               </label>
 
               <div className="relative">
-                <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#78837c]" />
                 <input
                   type="text"
                   value={productSearch}
@@ -336,8 +332,8 @@ export default function Billing({
                     setProductSearch(e.target.value);
                     setShowRecommendations(true);
                   }}
-                  placeholder="e.g. Earphones, Charger, Rice..."
-                  className="w-full pl-10 pr-9 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 shadow-2xs"
+                  placeholder="e.g. Earbuds, Charger, Basmati..."
+                  className="w-full pl-10 pr-9 py-2.5 bg-black/50 border border-white/15 rounded-xl text-sm text-[#dfe7e0] placeholder-[#78837c] focus:outline-none focus:border-[#e0231c] focus:ring-1 focus:ring-[#e0231c]/50 transition shadow-inner"
                 />
 
                 {productSearch && (
@@ -347,7 +343,7 @@ export default function Billing({
                       setProductSearch('');
                       setSelectedProductId('');
                     }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 rounded-md"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78837c] hover:text-[#dfe7e0] p-1 rounded-md"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -356,20 +352,20 @@ export default function Billing({
 
               {/* Recommendations Floating Popover */}
               {showRecommendations && (
-                <div className="absolute left-0 right-0 top-full mt-1.5 bg-white rounded-2xl border border-slate-200 shadow-2xl z-30 max-h-72 overflow-y-auto divide-y divide-slate-100 animate-scale-up">
-                  <div className="px-3.5 py-2 bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider flex justify-between items-center sticky top-0 border-b border-slate-100 backdrop-blur-md">
-                    <span className="flex items-center gap-1.5 text-emerald-800">
-                      <Sparkles className="w-3 h-3 text-emerald-600" />
-                      {trimmedSearch ? 'Matching Recommendations' : 'Popular In-Stock Items'}
+                <div className="absolute left-0 right-0 top-full mt-1.5 bg-[#0a0e12]/95 backdrop-blur-xl rounded-2xl border border-white/20 shadow-[0_12px_40px_rgba(0,0,0,0.95)] z-30 max-h-72 overflow-y-auto divide-y divide-white/5 animate-scale-up">
+                  <div className="px-3.5 py-2 bg-black/60 text-[9px] font-mono uppercase tracking-widest text-[#78837c] flex justify-between items-center sticky top-0 border-b border-white/10 backdrop-blur-md">
+                    <span className="flex items-center gap-1.5 text-red-300">
+                      <Sparkles className="w-3 h-3 text-[#e0231c]" />
+                      {trimmedSearch ? 'Matching Recommendations' : 'Popular Items'}
                     </span>
-                    <span className="text-[10px] text-slate-400 font-normal">
+                    <span className="text-[9px] text-[#78837c] font-normal">
                       Tap + to add 1 unit
                     </span>
                   </div>
 
                   {recommendedProducts.length === 0 ? (
-                    <div className="p-6 text-center text-xs text-slate-400">
-                      No products matching "{productSearch}"
+                    <div className="p-6 text-center text-xs text-[#78837c] font-mono">
+                      No items matching "{productSearch}"
                     </div>
                   ) : (
                     recommendedProducts.slice(0, 8).map((p) => {
@@ -381,25 +377,25 @@ export default function Billing({
                         <div
                           key={p.id}
                           onClick={() => handleSelectRecommendation(p)}
-                          className={`p-3 flex items-center justify-between hover:bg-slate-50 transition cursor-pointer ${
-                            isSelected ? 'bg-emerald-50/70 border-l-4 border-emerald-600' : ''
+                          className={`p-3 flex items-center justify-between hover:bg-white/[0.04] transition cursor-pointer ${
+                            isSelected ? 'bg-red-950/30 border-l-4 border-[#e0231c]' : ''
                           }`}
                         >
                           <div className="flex-1 pr-3 min-w-0">
-                            <div className="font-bold text-xs text-slate-900 leading-tight truncate">
+                            <div className="font-bold text-xs text-[#dfe7e0] leading-tight truncate">
                               {p.name}
                             </div>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-[10px] text-slate-500 px-1.5 py-0.2 bg-slate-100 rounded">
+                              <span className="text-[9px] font-mono text-[#78837c] px-1.5 py-0.2 bg-black/40 rounded border border-white/5">
                                 {p.category || 'General'}
                               </span>
                               <span
-                                className={`text-[10px] font-semibold ${
+                                className={`text-[10px] font-mono ${
                                   isOutOfStock
-                                    ? 'text-rose-600 font-bold'
+                                    ? 'text-red-400 font-bold'
                                     : isLowStock
-                                    ? 'text-amber-700'
-                                    : 'text-emerald-700'
+                                    ? 'text-amber-300'
+                                    : 'text-emerald-400'
                                 }`}
                               >
                                 {isOutOfStock
@@ -412,7 +408,7 @@ export default function Billing({
                           </div>
 
                           <div className="flex items-center gap-2.5 shrink-0">
-                            <span className="font-mono font-bold text-xs sm:text-sm text-slate-900">
+                            <span className="font-mono font-bold text-xs sm:text-sm text-[#c9a24a]">
                               ₹{p.sellingPrice}
                             </span>
                             <button
@@ -420,7 +416,7 @@ export default function Billing({
                               onClick={(e) => handleQuickAdd(p, e)}
                               disabled={isOutOfStock}
                               title="Add 1 directly to cart"
-                              className="px-2.5 py-1.5 text-xs font-bold bg-emerald-100 hover:bg-emerald-600 hover:text-white text-emerald-800 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed rounded-lg transition-all duration-150 flex items-center gap-1 shadow-2xs active:scale-95"
+                              className="px-2.5 py-1.5 text-xs font-mono font-bold btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed rounded-lg transition flex items-center gap-1 active:scale-95"
                             >
                               <Plus className="w-3.5 h-3.5" />
                               <span>Add</span>
@@ -437,7 +433,7 @@ export default function Billing({
             {/* Product Dropdown Selection (Fallback) */}
             <div className="space-y-3.5">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-[10px] font-mono uppercase tracking-wider text-[#aab4ad] mb-1">
                   Or Pick Directly from Full Catalog
                 </label>
                 <select
@@ -449,14 +445,15 @@ export default function Billing({
                     setSelectedQuantity(1);
                     setErrorMessage('');
                   }}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:bg-white focus:border-emerald-500 shadow-2xs"
+                  className="w-full px-3.5 py-2.5 bg-black/50 border border-white/15 rounded-xl text-xs sm:text-sm text-[#dfe7e0] focus:outline-none focus:border-[#e0231c] shadow-inner"
                 >
-                  <option value="">-- Choose item from list --</option>
+                  <option value="" className="bg-[#05070a] text-[#78837c]">-- Choose item from list --</option>
                   {availableProducts.map((p) => (
                     <option
                       key={p.id}
                       value={p.id}
                       disabled={p.quantity <= 0}
+                      className="bg-[#05070a] text-[#dfe7e0]"
                     >
                       {p.name} — ₹{p.sellingPrice} ({p.quantity <= 0 ? 'OUT OF STOCK' : `${p.quantity} in stock`})
                     </option>
@@ -466,20 +463,20 @@ export default function Billing({
 
               {/* Selected Product Preview Card */}
               {selectedProduct && (
-                <div className="p-3.5 bg-emerald-50/70 border border-emerald-200/80 rounded-xl text-xs space-y-1.5 animate-fade-in">
-                  <div className="flex justify-between items-baseline font-bold text-slate-900">
+                <div className="p-3.5 bg-black/50 border border-[#e0231c]/30 rounded-xl text-xs space-y-1.5 animate-fade-in shadow-inner">
+                  <div className="flex justify-between items-baseline font-bold text-[#dfe7e0]">
                     <span className="truncate pr-2">{selectedProduct.name}</span>
-                    <span className="text-emerald-800 font-mono text-sm shrink-0">
+                    <span className="text-[#c9a24a] font-mono text-sm shrink-0">
                       ₹{selectedProduct.sellingPrice}
                     </span>
                   </div>
-                  <div className="flex justify-between text-slate-600">
+                  <div className="flex justify-between text-[#78837c] font-mono text-[11px]">
                     <span>Available In Stock:</span>
                     <span
                       className={`font-bold font-mono ${
                         selectedProduct.quantity <= selectedProduct.minStock
-                          ? 'text-amber-700'
-                          : 'text-slate-900'
+                          ? 'text-amber-400'
+                          : 'text-[#dfe7e0]'
                       }`}
                     >
                       {selectedProduct.quantity} units
@@ -491,7 +488,7 @@ export default function Billing({
               {/* Quantity Input */}
               <div className="grid grid-cols-2 gap-3 items-end">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-[10px] font-mono uppercase tracking-wider text-[#aab4ad] mb-1">
                     Custom Quantity
                   </label>
                   <input
@@ -501,7 +498,7 @@ export default function Billing({
                     value={selectedQuantity}
                     onChange={(e) => setSelectedQuantity(e.target.value)}
                     disabled={!selectedProduct || selectedProduct.quantity <= 0}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono focus:outline-none focus:bg-white focus:border-emerald-500 disabled:opacity-50"
+                    className="w-full px-3.5 py-2 bg-black/50 border border-white/15 rounded-xl text-sm font-mono text-[#dfe7e0] focus:outline-none focus:border-[#e0231c] disabled:opacity-40"
                   />
                 </div>
 
@@ -509,7 +506,7 @@ export default function Billing({
                   type="button"
                   onClick={handleAddToCart}
                   disabled={!selectedProduct || selectedProduct.quantity <= 0}
-                  className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-xs rounded-xl transition shadow-xs hover:shadow flex items-center justify-center gap-1.5 active:scale-95"
+                  className="w-full py-2.5 px-4 btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-1.5 active:scale-95 shadow-md"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add to Bill</span>
@@ -519,34 +516,36 @@ export default function Billing({
           </div>
 
           {/* Customer & Payment Options Card */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card space-y-4">
-            <h3 className="font-bold text-sm text-slate-900">Customer & Payment Mode</h3>
+          <div className="kage-card p-5 space-y-4">
+            <h3 className="font-bold text-xs uppercase tracking-wider text-[#dfe7e0]">
+              Customer & Payment Mode
+            </h3>
 
             {/* Customer Name */}
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-[10px] font-mono uppercase tracking-wider text-[#aab4ad] mb-1">
                 Customer Name (Optional)
               </label>
               <div className="relative">
-                <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#78837c]" />
                 <input
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="Walk-in Customer"
-                  className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:bg-white focus:border-emerald-500"
+                  className="w-full pl-9 pr-3 py-2 bg-black/50 border border-white/15 rounded-xl text-sm text-[#dfe7e0] placeholder-[#78837c] focus:outline-none focus:border-[#e0231c]"
                 />
               </div>
 
               {customers.length > 0 && (
                 <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                  <span className="text-[10px] text-slate-400">Recent Customers:</span>
+                  <span className="text-[10px] text-[#78837c] font-mono">Frequent:</span>
                   {customers.slice(0, 3).map((c) => (
                     <button
                       key={c.id}
                       type="button"
                       onClick={() => setCustomerName(c.name)}
-                      className="text-[10px] px-2 py-0.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 text-slate-700 rounded-lg border border-slate-200 transition"
+                      className="text-[10px] font-mono px-2 py-0.5 bg-white/[0.04] hover:bg-white/[0.08] text-[#aab4ad] hover:text-[#dfe7e0] rounded-lg border border-white/10 transition"
                     >
                       {c.name}
                     </button>
@@ -557,43 +556,43 @@ export default function Billing({
 
             {/* Payment Mode Selector */}
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Payment Method <span className="text-rose-500">*</span>
+              <label className="block text-[10px] font-mono uppercase tracking-wider text-[#aab4ad] mb-1.5">
+                Payment Method <span className="text-[#e0231c]">*</span>
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('Cash')}
-                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-sm font-bold transition-all duration-150 ${
+                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-mono uppercase tracking-wider transition-all duration-150 ${
                     paymentMethod === 'Cash'
-                      ? 'bg-emerald-50 border-emerald-500 text-emerald-800 ring-2 ring-emerald-500/20 shadow-2xs'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                      ? 'bg-[#e0231c]/25 border-[#e0231c] text-white shadow-[0_0_15px_rgba(224,35,28,0.2)] font-bold'
+                      : 'bg-black/40 border-white/10 text-[#78837c] hover:text-[#dfe7e0]'
                   }`}
                 >
-                  <Banknote className="w-4 h-4 text-emerald-600" />
+                  <Banknote className="w-4 h-4 text-[#c9a24a]" />
                   <span>Cash</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('UPI')}
-                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-sm font-bold transition-all duration-150 ${
+                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-mono uppercase tracking-wider transition-all duration-150 ${
                     paymentMethod === 'UPI'
-                      ? 'bg-blue-50 border-blue-500 text-blue-800 ring-2 ring-blue-500/20 shadow-2xs'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                      ? 'bg-blue-950/40 border-blue-500 text-blue-200 shadow-[0_0_15px_rgba(59,130,246,0.2)] font-bold'
+                      : 'bg-black/40 border-white/10 text-[#78837c] hover:text-[#dfe7e0]'
                   }`}
                 >
-                  <QrCode className="w-4 h-4 text-blue-600" />
+                  <QrCode className="w-4 h-4 text-blue-400" />
                   <span>UPI / QR</span>
                 </button>
               </div>
 
               {/* UPI Notice */}
               {paymentMethod === 'UPI' && (
-                <div className="mt-2.5 p-3 bg-blue-50/80 border border-blue-200 rounded-xl text-[11px] text-blue-800 flex items-start gap-2 leading-relaxed animate-fade-in">
-                  <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                <div className="mt-2.5 p-3 bg-blue-950/20 border border-blue-500/30 rounded-xl text-[11px] text-blue-200 flex items-start gap-2 leading-relaxed animate-fade-in">
+                  <Info className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Note:</strong> Selecting UPI records the payment mode on the invoice. Please check your UPI soundbox or app (PhonePe, GPay, Paytm) to verify funds before completing the sale.
+                    <strong>Soundbox Verification:</strong> Confirm transaction arrival on PhonePe, GPay, or Paytm before finalizing the bill.
                   </span>
                 </div>
               )}
@@ -601,16 +600,18 @@ export default function Billing({
           </div>
         </div>
 
-        {/* Right Column: Active Bill / Cart Summary (7 cols on lg) */}
+        {/* Right Column: Active Bill / Cart Summary */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/80 shadow-card flex flex-col min-h-[480px]">
-            <div className="flex items-center justify-between pb-3.5 mb-3 border-b border-slate-100">
+          <div className="kage-card p-5 sm:p-6 flex flex-col min-h-[480px]">
+            <div className="flex items-center justify-between pb-3.5 mb-3 border-b border-white/10">
               <div className="flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700">
+                <div className="p-1.5 rounded-lg bg-white/[0.05] text-[#c9a24a]">
                   <ShoppingCart className="w-4 h-4" />
                 </div>
-                <h3 className="font-bold text-sm text-slate-900">Current Cart</h3>
-                <span className="text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-mono font-bold">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-[#dfe7e0]">
+                  Active Cart Ledger
+                </h3>
+                <span className="text-xs bg-black/40 text-amber-300 border border-amber-600/30 px-2 py-0.5 rounded-full font-mono font-bold">
                   {totalItemCount} {totalItemCount === 1 ? 'item' : 'items'}
                 </span>
               </div>
@@ -618,7 +619,7 @@ export default function Billing({
                 <button
                   type="button"
                   onClick={handleClearCart}
-                  className="text-xs text-rose-600 hover:text-rose-800 font-semibold transition"
+                  className="text-xs text-red-400 hover:text-red-300 font-mono transition"
                 >
                   Clear Cart
                 </button>
@@ -628,55 +629,55 @@ export default function Billing({
             {/* Cart Items List */}
             <div className="flex-1 overflow-y-auto max-h-[340px]">
               {cart.length === 0 ? (
-                <div className="py-20 text-center text-slate-400">
-                  <ShoppingCart className="w-12 h-12 mx-auto mb-2 opacity-30 text-slate-400" />
-                  <p className="font-bold text-sm text-slate-700">Cart is Empty</p>
-                  <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
-                    Type an item name on the left or click "+ Add" on recommendations to start building the bill.
+                <div className="py-20 text-center text-[#78837c]">
+                  <ShoppingCart className="w-12 h-12 mx-auto mb-2 opacity-30 text-[#dfe7e0]" />
+                  <p className="font-bold text-sm text-[#dfe7e0]">Cart is Empty</p>
+                  <p className="text-xs text-[#78837c] mt-1 max-w-xs mx-auto">
+                    Type an item name on the left or tap "+ Add" on recommendations to begin compiling the bill.
                   </p>
                 </div>
               ) : (
                 <table className="w-full text-xs">
-                  <thead className="text-slate-400 border-b border-slate-100">
+                  <thead className="text-[#78837c] border-b border-white/10 text-[9px] font-mono uppercase tracking-[0.2em]">
                     <tr>
-                      <th className="text-left pb-2.5 font-bold uppercase tracking-wider text-[10px]">Product</th>
-                      <th className="text-center pb-2.5 font-bold uppercase tracking-wider text-[10px]">Rate</th>
-                      <th className="text-center pb-2.5 font-bold uppercase tracking-wider text-[10px]">Qty</th>
-                      <th className="text-right pb-2.5 font-bold uppercase tracking-wider text-[10px]">Total</th>
+                      <th className="text-left pb-2.5">Product</th>
+                      <th className="text-center pb-2.5">Rate</th>
+                      <th className="text-center pb-2.5">Qty</th>
+                      <th className="text-right pb-2.5">Total</th>
                       <th className="pb-2.5 w-8"></th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-white/5">
                     {cart.map((item) => (
-                      <tr key={item.productId} className="hover:bg-slate-50/70 transition-colors">
+                      <tr key={item.productId} className="hover:bg-white/[0.03] transition-colors">
                         {/* Name */}
-                        <td className="py-3 font-semibold text-slate-900 max-w-[170px] truncate">
+                        <td className="py-3 font-semibold text-[#dfe7e0] max-w-[170px] truncate">
                           {item.name}
                         </td>
 
                         {/* Rate */}
-                        <td className="py-3 text-center font-mono text-slate-600">
+                        <td className="py-3 text-center font-mono text-[#aab4ad]">
                           ₹{item.price}
                         </td>
 
                         {/* Quantity Controls */}
                         <td className="py-3 text-center">
-                          <div className="inline-flex items-center gap-1.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200/80">
+                          <div className="inline-flex items-center gap-1.5 bg-black/50 p-0.5 rounded-lg border border-white/10">
                             <button
                               type="button"
                               onClick={() => handleUpdateCartQuantity(item.productId, -1)}
-                              className="w-5 h-5 flex items-center justify-center font-bold text-slate-700 hover:bg-white rounded transition active:scale-95"
+                              className="w-5 h-5 flex items-center justify-center font-bold text-[#aab4ad] hover:text-white hover:bg-white/[0.1] rounded transition active:scale-95"
                               title="Decrease"
                             >
                               -
                             </button>
-                            <span className="w-6 text-center font-bold font-mono text-slate-900">
+                            <span className="w-6 text-center font-bold font-mono text-[#dfe7e0]">
                               {item.quantity}
                             </span>
                             <button
                               type="button"
                               onClick={() => handleUpdateCartQuantity(item.productId, 1)}
-                              className="w-5 h-5 flex items-center justify-center font-bold text-slate-700 hover:bg-white rounded transition active:scale-95"
+                              className="w-5 h-5 flex items-center justify-center font-bold text-[#aab4ad] hover:text-white hover:bg-white/[0.1] rounded transition active:scale-95"
                               title="Increase"
                             >
                               +
@@ -685,7 +686,7 @@ export default function Billing({
                         </td>
 
                         {/* Item Total */}
-                        <td className="py-3 text-right font-bold text-slate-900 font-mono">
+                        <td className="py-3 text-right font-bold text-[#c9a24a] font-mono">
                           {formatRupees(item.total)}
                         </td>
 
@@ -694,7 +695,7 @@ export default function Billing({
                           <button
                             type="button"
                             onClick={() => handleRemoveFromCart(item.productId)}
-                            className="p-1 text-slate-400 hover:text-rose-600 rounded transition"
+                            className="p-1 text-[#78837c] hover:text-red-400 rounded transition"
                             title="Remove item"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -708,21 +709,21 @@ export default function Billing({
             </div>
 
             {/* Cart Bill Summary & Final Checkout */}
-            <div className="mt-auto pt-4 border-t border-slate-200/80 space-y-3">
-              <div className="space-y-1.5 text-xs">
-                <div className="flex justify-between text-slate-600">
+            <div className="mt-auto pt-4 border-t border-white/10 space-y-3">
+              <div className="space-y-1.5 text-xs font-mono">
+                <div className="flex justify-between text-[#aab4ad]">
                   <span>Customer:</span>
-                  <span className="font-semibold text-slate-900">
+                  <span className="font-semibold text-[#dfe7e0]">
                     {customerName.trim() || 'Walk-in Customer'}
                   </span>
                 </div>
-                <div className="flex justify-between text-slate-600">
+                <div className="flex justify-between text-[#aab4ad]">
                   <span>Payment Mode:</span>
-                  <span className="font-bold text-emerald-700">{paymentMethod}</span>
+                  <span className="font-bold text-[#c9a24a]">{paymentMethod}</span>
                 </div>
-                <div className="flex justify-between items-baseline pt-2 border-t border-slate-200">
-                  <span className="text-sm font-bold text-slate-900">Final Bill Amount:</span>
-                  <span className="text-2xl sm:text-3xl font-black text-emerald-700 font-mono">
+                <div className="flex justify-between items-baseline pt-2 border-t border-white/10">
+                  <span className="text-xs uppercase tracking-wider text-[#dfe7e0]">Grand Total:</span>
+                  <span className="text-2xl sm:text-3xl font-bold text-[#c9a24a] font-mono">
                     {formatRupees(cartTotal)}
                   </span>
                 </div>
@@ -733,10 +734,10 @@ export default function Billing({
                 type="button"
                 onClick={handleCompleteSale}
                 disabled={cart.length === 0 || isSubmitting}
-                className="w-full py-4 px-4 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 disabled:from-slate-300 disabled:to-slate-300 disabled:cursor-not-allowed text-white font-black text-sm rounded-xl transition-all duration-150 shadow-md hover:shadow-lg flex items-center justify-center gap-2 active:scale-95"
+                className="w-full py-4 px-4 btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-2 active:scale-95 shadow-lg"
               >
                 <CheckCircle className="w-5 h-5" />
-                <span>{isSubmitting ? 'Processing Bill...' : 'Complete Sale & Print Bill'}</span>
+                <span>{isSubmitting ? 'Recording Bill...' : 'Complete Sale & Print Bill'}</span>
               </button>
             </div>
           </div>

@@ -12,7 +12,7 @@ import Toast from './components/Toast';
 import ConfirmModal from './components/ConfirmModal';
 import LoginPage from './components/LoginPage';
 import NotFound from './components/NotFound';
-import KageExperience from './components/KageExperience';
+import { LandingPageFrame } from './shaders/landing-pages/LandingPageFrame';
 
 import {
   getProducts,
@@ -32,9 +32,8 @@ import { getLocalUser, logoutUser } from './services/supabaseClient';
 export default function App() {
   // Authentication State
   const [currentUser, setCurrentUser] = useState(() => getLocalUser());
-  const [isGuestExploring, setIsGuestExploring] = useState(false);
 
-  // Navigation: 'dashboard' | 'products' | 'billing' | 'udhaar' | 'experience'
+  // Navigation: 'dashboard' | 'products' | 'billing' | 'udhaar'
   const [activeSection, setActiveSection] = useState('dashboard');
 
   // Application Data States
@@ -75,7 +74,7 @@ export default function App() {
     setDashboardStats(stats);
   }, []);
 
-  // Global keyboard shortcuts [1]-[5]
+  // Global keyboard shortcuts [1]-[4]
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
@@ -85,7 +84,6 @@ export default function App() {
       else if (e.key === '2') setActiveSection('products');
       else if (e.key === '3') setActiveSection('billing');
       else if (e.key === '4') setActiveSection('udhaar');
-      else if (e.key === '5') setActiveSection('experience');
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -127,7 +125,6 @@ export default function App() {
   const handleCompleteSale = (billData) => {
     const newBill = createBill(billData);
     refreshData();
-    // Automatically pop open the printable receipt modal
     setActiveReceiptBill(newBill);
     return newBill;
   };
@@ -159,141 +156,140 @@ export default function App() {
     showToast('All stored records cleared.', 'info');
   };
 
-  // If user is not authenticated, show Login & Registration Page or Guest 3D Experience
-  if (!currentUser) {
-    if (isGuestExploring) {
-      return (
-        <KageExperience
-          onBack={() => setIsGuestExploring(false)}
-          onNavigate={(sec) => {
-            setIsGuestExploring(false);
-            setActiveSection(sec);
-          }}
-        />
-      );
-    }
-
-    return (
-      <>
-        <LoginPage
-          onLoginSuccess={handleLoginSuccess}
-          onExploreExperience={() => setIsGuestExploring(true)}
-        />
-        <Toast toast={toast} onClose={() => setToast(null)} />
-      </>
-    );
-  }
-
   // Check if valid section is selected
-  const isValidSection = ['dashboard', 'products', 'billing', 'udhaar', 'experience'].includes(activeSection);
-
-  // If in full 3D experience mode
-  if (activeSection === 'experience') {
-    return (
-      <KageExperience
-        onBack={() => setActiveSection('dashboard')}
-        onNavigate={(sec) => setActiveSection(sec)}
-      />
-    );
-  }
+  const isValidSection = ['dashboard', 'products', 'billing', 'udhaar'].includes(activeSection);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col text-slate-800">
-      {/* Top Header Navigation */}
-      <Header
-        onClearData={() => setIsResetConfirmOpen(true)}
-        currentUser={currentUser}
-        onLogout={handleLogout}
-        onNavigate={(sec) => setActiveSection(sec)}
+    <div className="min-h-screen bg-[#05070a] text-[#dfe7e0] relative selection:bg-[#e0231c] selection:text-white">
+      {/* 1. Authentic Kage Three.js 3D Background Layer */}
+      <LandingPageFrame
+        title="Kage 3D Temple Sanctuary"
+        sourceUrl="/landing-pages/kage.html"
+        backgroundCanvasSelector="#gl"
+        backgroundVisualSelector="#vignette, #grain"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          width: '100vw',
+          height: '100vh',
+          pointerEvents: 'none',
+          zIndex: 0,
+          opacity: 0.68,
+        }}
       />
 
-      <div className="flex-1 flex max-w-7xl w-full mx-auto">
-        {/* Desktop Sidebar Navigation */}
-        <Sidebar
-          activeSection={activeSection}
-          onSelectSection={(sec) => setActiveSection(sec)}
-        />
+      {/* 2. Atmospheric Vignette Overlay */}
+      <div className="kage-vignette" />
 
-        {/* Main Content Area */}
-        <main className="flex-1 p-3 sm:p-6 lg:p-8 pb-24 md:pb-8 max-w-full overflow-hidden">
-          {activeSection === 'dashboard' && (
-            <Dashboard
-              stats={dashboardStats}
-              onNavigate={(section) => setActiveSection(section)}
-              onViewBill={(bill) => setActiveReceiptBill(bill)}
+      {/* 3. Main Application Content (z-10) */}
+      <div className="relative z-10 min-h-screen flex flex-col">
+        {/* If user is not authenticated, show Kage Login & Registration Portal */}
+        {!currentUser ? (
+          <>
+            <LoginPage onLoginSuccess={handleLoginSuccess} />
+            <Toast toast={toast} onClose={() => setToast(null)} />
+          </>
+        ) : (
+          <>
+            {/* Top Header Navigation */}
+            <Header
+              onClearData={() => setIsResetConfirmOpen(true)}
+              currentUser={currentUser}
+              onLogout={handleLogout}
+              onNavigate={(sec) => setActiveSection(sec)}
+              activeSection={activeSection}
+            />
+
+            <div className="flex-1 flex max-w-7xl w-full mx-auto">
+              {/* Desktop Sidebar Navigation */}
+              <Sidebar
+                activeSection={activeSection}
+                onSelectSection={(sec) => setActiveSection(sec)}
+              />
+
+              {/* Main Content Area: Temple Pavilions */}
+              <main className="flex-1 p-3 sm:p-6 lg:p-8 pb-24 md:pb-8 max-w-full overflow-hidden">
+                {activeSection === 'dashboard' && (
+                  <Dashboard
+                    stats={dashboardStats}
+                    onNavigate={(section) => setActiveSection(section)}
+                    onViewBill={(bill) => setActiveReceiptBill(bill)}
+                    storeName={currentUser?.shopName}
+                  />
+                )}
+
+                {activeSection === 'products' && (
+                  <Products
+                    products={products}
+                    onSaveProduct={handleSaveProduct}
+                    onDeleteProduct={handleDeleteProduct}
+                    showToast={showToast}
+                  />
+                )}
+
+                {activeSection === 'billing' && (
+                  <Billing
+                    products={products}
+                    customers={customers}
+                    onCompleteSale={handleCompleteSale}
+                    showToast={showToast}
+                  />
+                )}
+
+                {activeSection === 'udhaar' && (
+                  <CustomerUdhaar
+                    customers={customers}
+                    onSaveCustomer={handleSaveCustomer}
+                    onRecordUdhaar={handleRecordUdhaar}
+                    onRecordPayment={handleRecordPayment}
+                    showToast={showToast}
+                  />
+                )}
+
+                {/* 404 Custom Fallback */}
+                {!isValidSection && (
+                  <NotFound onNavigate={(sec) => setActiveSection(sec)} />
+                )}
+              </main>
+            </div>
+
+            {/* Footer with Working Links */}
+            <Footer
+              onNavigate={(sec) => setActiveSection(sec)}
+              currentUser={currentUser}
+            />
+
+            {/* Mobile Bottom Navigation */}
+            <MobileNav
+              activeSection={activeSection}
+              onSelectSection={(sec) => setActiveSection(sec)}
+            />
+
+            {/* Printable Receipt Modal */}
+            <ReceiptModal
+              isOpen={Boolean(activeReceiptBill)}
+              bill={activeReceiptBill}
+              onClose={() => setActiveReceiptBill(null)}
               storeName={currentUser?.shopName}
             />
-          )}
 
-          {activeSection === 'products' && (
-            <Products
-              products={products}
-              onSaveProduct={handleSaveProduct}
-              onDeleteProduct={handleDeleteProduct}
-              showToast={showToast}
+            {/* Reset Confirmation Modal */}
+            <ConfirmModal
+              isOpen={isResetConfirmOpen}
+              title="Reset Store Records?"
+              message="This will erase all products, sales history, customer records, and udhaar ledgers stored in this browser."
+              confirmText="Yes, Reset Everything"
+              cancelText="Cancel"
+              isDanger={true}
+              onConfirm={handleClearAllData}
+              onCancel={() => setIsResetConfirmOpen(false)}
             />
-          )}
 
-          {activeSection === 'billing' && (
-            <Billing
-              products={products}
-              customers={customers}
-              onCompleteSale={handleCompleteSale}
-              showToast={showToast}
-            />
-          )}
-
-          {activeSection === 'udhaar' && (
-            <CustomerUdhaar
-              customers={customers}
-              onSaveCustomer={handleSaveCustomer}
-              onRecordUdhaar={handleRecordUdhaar}
-              onRecordPayment={handleRecordPayment}
-              showToast={showToast}
-            />
-          )}
-
-          {/* 404 Custom Fallback */}
-          {!isValidSection && (
-            <NotFound onNavigate={(sec) => setActiveSection(sec)} />
-          )}
-        </main>
+            {/* Feedback Toast Notifications */}
+            <Toast toast={toast} onClose={() => setToast(null)} />
+          </>
+        )}
       </div>
-
-      {/* Footer with Working Links */}
-      <Footer
-        onNavigate={(sec) => setActiveSection(sec)}
-        currentUser={currentUser}
-      />
-
-      {/* Mobile Bottom Navigation */}
-      <MobileNav
-        activeSection={activeSection}
-        onSelectSection={(sec) => setActiveSection(sec)}
-      />
-
-      {/* Printable Receipt Modal */}
-      <ReceiptModal
-        isOpen={Boolean(activeReceiptBill)}
-        bill={activeReceiptBill}
-        onClose={() => setActiveReceiptBill(null)}
-        storeName={currentUser?.shopName}
-      />
-
-      {/* Reset Confirmation Modal */}
-      <ConfirmModal
-        isOpen={isResetConfirmOpen}
-        title="Reset Store Records?"
-        message="This will erase all products, sales history, customer records, and udhaar ledgers stored in this browser."
-        confirmText="Yes, Reset Everything"
-        cancelText="Cancel"
-        isDanger={true}
-        onConfirm={handleClearAllData}
-        onCancel={() => setIsResetConfirmOpen(false)}
-      />
-
-      {/* User Feedback Toast Notifications */}
-      <Toast toast={toast} onClose={() => setToast(null)} />
     </div>
   );
 }
