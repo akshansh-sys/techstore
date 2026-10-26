@@ -17,29 +17,29 @@ export default function Sidebar({ activeSection, onSelectSection }) {
   const navItems = [
     {
       id: 'dashboard',
-      name: 'Sanctuary Overview',
-      subtitle: 'Live Stats & Command',
+      name: 'Dashboard',
+      subtitle: 'Overview & Analytics',
       icon: LayoutDashboard,
       shortcut: '1',
     },
     {
       id: 'products',
-      name: 'Inventory Vault',
-      subtitle: 'Stock & Margin Control',
+      name: 'Products',
+      subtitle: 'Manage Stock & Pricing',
       icon: Package,
       shortcut: '2',
     },
     {
       id: 'billing',
-      name: 'Billing Counter',
+      name: 'Billing',
       subtitle: 'Point of Sale & Invoices',
       icon: ShoppingCart,
       shortcut: '3',
     },
     {
       id: 'udhaar',
-      name: 'Ledger of Honor',
-      subtitle: 'Customer Udhaar Khata',
+      name: 'Customer Udhaar',
+      subtitle: 'Credit & Khata Records',
       icon: Users,
       shortcut: '4',
     },
@@ -48,11 +48,6 @@ export default function Sidebar({ activeSection, onSelectSection }) {
   return (
     <aside className="no-print hidden md:flex flex-col w-64 bg-[#05070a]/75 backdrop-blur-md border-r border-white/10 shrink-0 min-h-[calc(100vh-4.5rem)]">
       <div className="p-4 flex-1 space-y-3">
-        <div className="px-3 pt-2 pb-1 text-[9px] font-mono uppercase tracking-[0.25em] text-[#78837c] flex items-center justify-between">
-          <span>PAVILIONS</span>
-          <span>KEY</span>
-        </div>
-
         <nav className="space-y-1.5" aria-label="Main Navigation">
           {navItems.map((item) => {
             const Icon = item.icon;

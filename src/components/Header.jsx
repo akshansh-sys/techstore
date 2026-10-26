@@ -6,10 +6,6 @@ import {
   LogOut,
   Mail,
   Phone,
-  LayoutDashboard,
-  Package,
-  ShoppingCart,
-  Users,
 } from 'lucide-react';
 import { getShopProfile } from '../services/dataService';
 
@@ -51,13 +47,6 @@ export default function Header({
     return () => clearInterval(interval);
   }, []);
 
-  const navLinks = [
-    { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
-    { id: 'products', name: 'Products', icon: Package },
-    { id: 'billing', name: 'Billing', icon: ShoppingCart },
-    { id: 'udhaar', name: 'Udhaar', icon: Users },
-  ];
-
   return (
     <header className="no-print bg-[#05070a]/85 backdrop-blur-md border-b border-[rgba(223,231,224,0.1)] sticky top-0 z-30 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-4">
@@ -83,36 +72,10 @@ export default function Header({
               </span>
             </div>
             <p className="text-[10px] text-[#78837c] font-mono tracking-widest hidden sm:block truncate max-w-xs mt-0.5">
-              {shop.tagline || 'RETAIL POS SANCTUARY'}
+              {shop.tagline || 'RETAIL POS TERMINAL'}
             </p>
           </div>
         </button>
-
-        {/* Center: Tracked Kage Section Nav Links (Desktop) */}
-        <nav className="hidden md:flex items-center gap-6 lg:gap-8" aria-label="Store Pavilions">
-          {navLinks.map((link) => {
-            const isActive = activeSection === link.id;
-            const Icon = link.icon;
-            return (
-              <button
-                key={link.id}
-                type="button"
-                onClick={() => onNavigate && onNavigate(link.id)}
-                className={`relative py-2 flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] font-medium transition-all duration-200 group ${
-                  isActive
-                    ? 'text-[#dfe7e0] font-bold'
-                    : 'text-[#78837c] hover:text-[#dfe7e0]'
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-[#e0231c]' : 'text-[#78837c] group-hover:text-[#aab4ad]'}`} />
-                <span>{link.name}</span>
-                {isActive && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#e0231c] to-transparent shadow-[0_0_8px_#e0231c]" />
-                )}
-              </button>
-            );
-          })}
-        </nav>
 
         {/* Right: Contacts, Live Time & Actions */}
         <div className="flex items-center gap-2 sm:gap-3">

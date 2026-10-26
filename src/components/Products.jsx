@@ -10,13 +10,156 @@ import {
   TrendingUp,
   CheckCircle2,
   Filter,
+  UploadCloud,
+  FileText,
+  Download,
+  Copy,
+  Check,
+  FileUp,
 } from 'lucide-react';
 import { formatRupees } from '../utils/formatters';
 import ConfirmModal from './ConfirmModal';
 
+const sampleProductsCSV = `Product Name, Category, Purchase Price, Selling Price, Quantity, Min Stock
+USB-C Fast Cable 65W, Accessories, 90, 249, 45, 10
+Wireless Optical Mouse, Accessories, 280, 599, 30, 5
+Mechanical Gaming Keyboard, Peripherals, 850, 1699, 15, 3
+SuperBass Bluetooth Speaker, Audio, 550, 1199, 20, 5
+Fast Wall Charger 65W GaN, Chargers, 400, 899, 25, 5
+Tempered Glass Protector, Mobile, 25, 149, 100, 20`;
+
+function parseProductList(text) {
+  if (!text || !text.trim()) return [];
+  const trimmed = text.trim();
+
+  // 1. JSON Array support
+  if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.map((item, index) => {
+          const name = String(item.name || item.title || item.product || item.itemName || '').trim();
+          const category = String(item.category || item.group || 'General').trim();
+          const purchasePrice = parseFloat(item.purchasePrice || item.costPrice || item.buyPrice || 0) || 0;
+          const sellingPrice = parseFloat(item.sellingPrice || item.price || item.sellPrice || item.rate || 0) || 0;
+          const quantity = parseInt(item.quantity || item.stock || item.qty || 10, 10) || 0;
+          const minStock = parseInt(item.minStock || item.min || 5, 10) || 5;
+          const isValid = Boolean(name && sellingPrice >= 0 && purchasePrice >= 0);
+
+          return {
+            id: `row-${index}`,
+            name,
+            category: category || 'General',
+            purchasePrice: Math.max(0, purchasePrice),
+            sellingPrice: Math.max(0, sellingPrice),
+            quantity: Math.max(0, quantity),
+            minStock: Math.max(0, minStock),
+            isValid,
+            error: !name ? 'Missing name' : (sellingPrice < 0 ? 'Negative price' : null),
+          };
+        });
+      }
+    } catch {
+      // fallback to line parsing
+    }
+  }
+
+  // 2. CSV / TSV line-by-line support
+  const lines = trimmed.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  if (lines.length === 0) return [];
+
+  const results = [];
+  let startIndex = 0;
+
+  // Header detection
+  const firstLineLower = lines[0].toLowerCase();
+  if (
+    firstLineLower.includes('name') ||
+    firstLineLower.includes('item') ||
+    firstLineLower.includes('product') ||
+    firstLineLower.includes('price') ||
+    firstLineLower.includes('category')
+  ) {
+    startIndex = 1;
+  }
+
+  for (let i = startIndex; i < lines.length; i++) {
+    const line = lines[i];
+    let parts;
+    if (line.includes('\t')) {
+      parts = line.split('\t').map((s) => s.trim().replace(/^["']|["']$/g, ''));
+    } else if (line.includes(';')) {
+      parts = line.split(';').map((s) => s.trim().replace(/^["']|["']$/g, ''));
+    } else {
+      parts = line.split(',').map((s) => s.trim().replace(/^["']|["']$/g, ''));
+    }
+
+    if (parts.length === 0 || (parts.length === 1 && !parts[0])) continue;
+
+    let name = '';
+    let category = 'General';
+    let purchasePrice = 0;
+    let sellingPrice = 0;
+    let quantity = 10;
+    let minStock = 5;
+
+    if (parts.length >= 6) {
+      name = parts[0];
+      category = parts[1] || 'General';
+      purchasePrice = parseFloat(parts[2]) || 0;
+      sellingPrice = parseFloat(parts[3]) || 0;
+      quantity = parseInt(parts[4], 10) || 0;
+      minStock = parseInt(parts[5], 10) || 5;
+    } else if (parts.length === 5) {
+      name = parts[0];
+      category = parts[1] || 'General';
+      purchasePrice = parseFloat(parts[2]) || 0;
+      sellingPrice = parseFloat(parts[3]) || 0;
+      quantity = parseInt(parts[4], 10) || 0;
+    } else if (parts.length === 4) {
+      if (!isNaN(parseFloat(parts[1]))) {
+        name = parts[0];
+        purchasePrice = parseFloat(parts[1]) || 0;
+        sellingPrice = parseFloat(parts[2]) || 0;
+        quantity = parseInt(parts[3], 10) || 0;
+      } else {
+        name = parts[0];
+        category = parts[1] || 'General';
+        sellingPrice = parseFloat(parts[2]) || 0;
+        quantity = parseInt(parts[3], 10) || 0;
+      }
+    } else if (parts.length === 3) {
+      name = parts[0];
+      sellingPrice = parseFloat(parts[1]) || 0;
+      quantity = parseInt(parts[2], 10) || 0;
+    } else if (parts.length === 2) {
+      name = parts[0];
+      sellingPrice = parseFloat(parts[1]) || 0;
+    } else if (parts.length === 1) {
+      name = parts[0];
+    }
+
+    const isValid = Boolean(name && name.trim().length > 0 && sellingPrice >= 0);
+    results.push({
+      id: `row-${i}`,
+      name: name.trim(),
+      category: (category || 'General').trim(),
+      purchasePrice: Math.max(0, purchasePrice),
+      sellingPrice: Math.max(0, sellingPrice),
+      quantity: Math.max(0, quantity),
+      minStock: Math.max(0, minStock),
+      isValid,
+      error: !name ? 'Missing name' : null,
+    });
+  }
+
+  return results;
+}
+
 export default function Products({
   products,
   onSaveProduct,
+  onBulkSaveProducts,
   onDeleteProduct,
   showToast,
 }) {
@@ -25,6 +168,14 @@ export default function Products({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [productToDelete, setProductToDelete] = useState(null);
+
+  // Bulk Import state
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+  const [bulkActiveTab, setBulkActiveTab] = useState('paste'); // 'paste' | 'file'
+  const [bulkInputText, setBulkInputText] = useState('');
+  const [bulkFileName, setBulkFileName] = useState('');
+  const [parsedProducts, setParsedProducts] = useState([]);
+  const [hasCopiedSample, setHasCopiedSample] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -128,6 +279,80 @@ export default function Products({
     }
   };
 
+  // Bulk Import Handlers
+  const handleOpenBulkModal = () => {
+    setIsBulkModalOpen(true);
+    setBulkActiveTab('paste');
+    setBulkInputText('');
+    setBulkFileName('');
+    setParsedProducts([]);
+    setHasCopiedSample(false);
+  };
+
+  const handleBulkTextChange = (text) => {
+    setBulkInputText(text);
+    const parsed = parseProductList(text);
+    setParsedProducts(parsed);
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBulkFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result;
+      if (typeof content === 'string') {
+        setBulkInputText(content);
+        const parsed = parseProductList(content);
+        setParsedProducts(parsed);
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleDownloadSample = () => {
+    const blob = new Blob([sampleProductsCSV], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'techstore_products_template.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Downloaded sample products CSV template!', 'info');
+  };
+
+  const handleCopySample = () => {
+    navigator.clipboard.writeText(sampleProductsCSV);
+    setHasCopiedSample(true);
+    showToast('Sample template copied to clipboard!', 'info');
+    setTimeout(() => setHasCopiedSample(false), 2500);
+  };
+
+  const handleExecuteBulkImport = () => {
+    const validItems = parsedProducts.filter((p) => p.isValid);
+    if (validItems.length === 0) {
+      showToast('No valid products to import. Please check your data.', 'error');
+      return;
+    }
+
+    try {
+      if (onBulkSaveProducts) {
+        onBulkSaveProducts(validItems);
+      } else {
+        validItems.forEach((item) => onSaveProduct(item));
+      }
+
+      showToast(`Successfully imported ${validItems.length} products!`, 'success');
+      setIsBulkModalOpen(false);
+      setBulkInputText('');
+      setParsedProducts([]);
+    } catch (err) {
+      showToast(err.message || 'Error importing products', 'error');
+    }
+  };
+
   // Delete product action with confirmation
   const handleConfirmDelete = () => {
     if (!productToDelete) return;
@@ -164,25 +389,37 @@ export default function Products({
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#dfe7e0] uppercase">
-              Inventory Vault
+              Products
             </h2>
             <span className="text-xs font-mono font-bold bg-white/[0.06] text-[#dfe7e0] px-2.5 py-0.5 rounded-full border border-white/10">
               {products.length}
             </span>
           </div>
           <p className="text-xs text-[#78837c] font-mono mt-1">
-            Manage purchase rates, selling prices, stock levels & profit margins
+            Manage stock inventory, selling prices & profit margins
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={handleOpenAddModal}
-          className="inline-flex items-center justify-center gap-2 px-5 py-3 btn-vermilion font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg active:scale-95 shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add New Item</span>
-        </button>
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <button
+            type="button"
+            onClick={handleOpenBulkModal}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 btn-secondary font-bold text-xs uppercase tracking-wider rounded-xl shadow-md active:scale-95 shrink-0"
+            title="Upload CSV / JSON or paste a list of products"
+          >
+            <UploadCloud className="w-4 h-4 text-[#c9a24a]" />
+            <span>Bulk Upload</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleOpenAddModal}
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:py-3 btn-vermilion font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg active:scale-95 shrink-0"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add New Item</span>
+          </button>
+        </div>
       </div>
 
       {/* Stock Health Summary Badges */}
@@ -567,6 +804,245 @@ export default function Products({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Product Upload Modal */}
+      {isBulkModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto animate-fade-in">
+          <div className="bg-[#0a0e12] rounded-2xl max-w-2xl w-full p-5 sm:p-7 shadow-[0_10px_40px_rgba(0,0,0,0.9)] border border-white/15 my-4 sm:my-8 max-h-[92vh] overflow-y-auto animate-scale-up space-y-4">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-amber-950/40 text-[#c9a24a] border border-amber-600/30">
+                  <UploadCloud className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base sm:text-lg text-[#dfe7e0] uppercase tracking-wide">
+                    Bulk Product Import
+                  </h3>
+                  <p className="text-[11px] text-[#78837c] font-mono mt-0.5">
+                    Directly upload or paste a list of items to add to inventory
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsBulkModalOpen(false)}
+                className="p-1.5 text-[#78837c] hover:text-[#dfe7e0] hover:bg-white/[0.08] rounded-lg transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Template Format Helpers */}
+            <div className="p-3 rounded-xl bg-black/40 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="space-y-0.5">
+                <span className="text-[11px] font-semibold text-[#dfe7e0] flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-[#c9a24a]" />
+                  Accepted Format (CSV / Excel / JSON)
+                </span>
+                <span className="text-[10px] text-[#78837c] font-mono block">
+                  Name, Category, Purchase Price, Selling Price, Quantity, Min Stock
+                </span>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleCopySample}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-[11px] font-mono text-[#dfe7e0] border border-white/10 transition active:scale-95"
+                  title="Copy sample data to clipboard"
+                >
+                  {hasCopiedSample ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-emerald-400 font-bold">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5 text-[#78837c]" />
+                      <span>Copy Format</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDownloadSample}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-[11px] font-mono text-[#dfe7e0] border border-white/10 transition active:scale-95"
+                  title="Download .csv template"
+                >
+                  <Download className="w-3.5 h-3.5 text-[#c9a24a]" />
+                  <span>Download CSV</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Input Method Tabs */}
+            <div className="flex items-center gap-2 border-b border-white/10 pb-2">
+              <button
+                type="button"
+                onClick={() => setBulkActiveTab('paste')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all ${
+                  bulkActiveTab === 'paste'
+                    ? 'bg-[#e0231c] text-white font-bold shadow-md shadow-red-950/50'
+                    : 'text-[#78837c] hover:text-[#dfe7e0] hover:bg-white/[0.04]'
+                }`}
+              >
+                Paste Product List
+              </button>
+              <button
+                type="button"
+                onClick={() => setBulkActiveTab('file')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all ${
+                  bulkActiveTab === 'file'
+                    ? 'bg-[#e0231c] text-white font-bold shadow-md shadow-red-950/50'
+                    : 'text-[#78837c] hover:text-[#dfe7e0] hover:bg-white/[0.04]'
+                }`}
+              >
+                Upload File (.csv / .json)
+              </button>
+            </div>
+
+            {/* Tab 1: Paste Input */}
+            {bulkActiveTab === 'paste' && (
+              <div className="space-y-1.5">
+                <label className="block text-[11px] font-mono uppercase tracking-wider text-[#aab4ad]">
+                  Paste Product Rows (One per line)
+                </label>
+                <textarea
+                  rows={6}
+                  value={bulkInputText}
+                  onChange={(e) => handleBulkTextChange(e.target.value)}
+                  placeholder={`USB-C Fast Cable, Accessories, 90, 249, 45, 10\nWireless Mouse, Accessories, 280, 599, 30, 5\nMechanical Keyboard, Peripherals, 850, 1699, 15, 3`}
+                  className="w-full p-3 bg-black/60 border border-white/15 rounded-xl text-xs font-mono text-[#dfe7e0] placeholder-[#5a645e] focus:outline-none focus:border-[#e0231c] focus:ring-1 focus:ring-[#e0231c]/50 transition leading-relaxed"
+                />
+              </div>
+            )}
+
+            {/* Tab 2: File Upload */}
+            {bulkActiveTab === 'file' && (
+              <div className="space-y-2">
+                <label className="block text-[11px] font-mono uppercase tracking-wider text-[#aab4ad]">
+                  Select CSV or JSON file from your computer
+                </label>
+                <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-white/20 hover:border-[#e0231c]/60 rounded-xl cursor-pointer bg-black/40 hover:bg-white/[0.02] transition-colors group">
+                  <FileUp className="w-8 h-8 text-[#78837c] group-hover:text-[#c9a24a] transition-colors mb-2" />
+                  <span className="text-xs font-semibold text-[#dfe7e0]">
+                    {bulkFileName ? bulkFileName : 'Click or Drag file to upload'}
+                  </span>
+                  <span className="text-[10px] text-[#78837c] font-mono mt-1">
+                    Supports .csv, .json, or .txt
+                  </span>
+                  <input
+                    type="file"
+                    accept=".csv, .json, .txt"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            )}
+
+            {/* Live Parsing Preview Section */}
+            {parsedProducts.length > 0 && (
+              <div className="space-y-2 pt-2 border-t border-white/10">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-[#78837c]">
+                      Parsed Preview:
+                    </span>
+                    <span className="text-[11px] font-mono font-bold text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-600/30">
+                      {parsedProducts.filter((p) => p.isValid).length} Ready to Import
+                    </span>
+                    {parsedProducts.filter((p) => !p.isValid).length > 0 && (
+                      <span className="text-[11px] font-mono font-bold text-rose-400 bg-rose-950/40 px-2 py-0.5 rounded border border-rose-600/30">
+                        {parsedProducts.filter((p) => !p.isValid).length} Incomplete
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="max-h-48 overflow-y-auto overflow-x-auto rounded-xl border border-white/10 bg-black/50">
+                  <table className="w-full text-left text-xs min-w-[500px]">
+                    <thead className="bg-black/60 border-b border-white/10 text-[9px] font-mono uppercase tracking-wider text-[#78837c] sticky top-0">
+                      <tr>
+                        <th className="py-2 px-3">Item Name</th>
+                        <th className="py-2 px-3">Category</th>
+                        <th className="py-2 px-3 text-right">Buy Rate</th>
+                        <th className="py-2 px-3 text-right">Sell Price</th>
+                        <th className="py-2 px-3 text-center">Stock</th>
+                        <th className="py-2 px-3 text-right">Margin</th>
+                        <th className="py-2 px-3 text-center">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5 font-mono text-[11px]">
+                      {parsedProducts.map((item, idx) => {
+                        const margin = item.sellingPrice - item.purchasePrice;
+                        return (
+                          <tr
+                            key={item.id || idx}
+                            className={item.isValid ? 'hover:bg-white/[0.02]' : 'bg-rose-950/20'}
+                          >
+                            <td className="py-2 px-3 font-medium text-[#dfe7e0]">
+                              {item.name || <span className="text-rose-400 italic">Empty Name</span>}
+                            </td>
+                            <td className="py-2 px-3 text-[#aab4ad]">
+                              {item.category}
+                            </td>
+                            <td className="py-2 px-3 text-right text-[#78837c]">
+                              {formatRupees(item.purchasePrice)}
+                            </td>
+                            <td className="py-2 px-3 text-right font-bold text-[#c9a24a]">
+                              {formatRupees(item.sellingPrice)}
+                            </td>
+                            <td className="py-2 px-3 text-center text-[#dfe7e0]">
+                              {item.quantity}
+                            </td>
+                            <td className="py-2 px-3 text-right font-bold text-emerald-400">
+                              +{formatRupees(margin)}
+                            </td>
+                            <td className="py-2 px-3 text-center">
+                              {item.isValid ? (
+                                <span className="text-[9px] text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-500/30">
+                                  Valid
+                                </span>
+                              ) : (
+                                <span className="text-[9px] text-rose-400 bg-rose-950/60 px-1.5 py-0.5 rounded border border-rose-500/30">
+                                  {item.error || 'Error'}
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Modal Actions */}
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+              <button
+                type="button"
+                onClick={() => setIsBulkModalOpen(false)}
+                className="px-4 py-2.5 text-xs font-mono text-[#aab4ad] hover:text-[#dfe7e0] bg-white/[0.04] hover:bg-white/[0.08] rounded-xl transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleExecuteBulkImport}
+                disabled={parsedProducts.filter((p) => p.isValid).length === 0}
+                className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white btn-vermilion rounded-xl shadow-md active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <UploadCloud className="w-4 h-4" />
+                <span>
+                  Import {parsedProducts.filter((p) => p.isValid).length} Products
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       )}

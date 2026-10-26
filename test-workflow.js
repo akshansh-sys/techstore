@@ -134,11 +134,31 @@ async function runTests() {
 
   // Test 7: Dashboard Stats
   console.log('\n7. Testing Dashboard Stats Calculation...');
-  const stats = getDashboardStats();
+  let stats = getDashboardStats();
   console.log(`✓ Dashboard Today Sales: ₹${stats.todaySales}`);
   console.log(`✓ Dashboard Total Products: ${stats.totalProducts}`);
   console.log(`✓ Dashboard Low Stock Count: ${stats.lowStockCount}`);
   console.log(`✓ Dashboard Total Pending Udhaar: ₹${stats.totalPendingUdhaar}`);
+
+  // Test 8: Bulk Product Import
+  console.log('\n8. Testing Bulk Product Import...');
+  const { bulkSaveProducts } = await import('./src/services/dataService.js');
+  const bulkItems = [
+    { name: 'USB-C Cable 65W', category: 'Accessories', purchasePrice: 90, sellingPrice: 249, quantity: 50, minStock: 10 },
+    { name: 'Wireless Optical Mouse', category: 'Accessories', purchasePrice: 280, sellingPrice: 599, quantity: 25, minStock: 5 },
+    { name: 'Mechanical Keyboard RGB', category: 'Peripherals', purchasePrice: 850, sellingPrice: 1699, quantity: 15, minStock: 3 },
+  ];
+  const savedBulk = bulkSaveProducts(bulkItems);
+  console.log(`✓ Bulk saved ${savedBulk.length} items`);
+  if (savedBulk.length !== 3) throw new Error('Expected 3 items to be saved in bulk');
+  
+  products = getProducts();
+  console.log(`✓ Total products now in inventory: ${products.length} (Expected: 4)`);
+  if (products.length !== 4) throw new Error('Inventory count mismatch after bulk save');
+
+  stats = getDashboardStats();
+  if (stats.totalProducts !== 4) throw new Error('Dashboard stats did not reflect bulk products');
+  console.log(`✓ Dashboard stats correctly updated to ${stats.totalProducts} products!`);
 
   console.log('\nALL WORKFLOW TESTS PASSED CLEANLY AND RELIABLY!');
 }

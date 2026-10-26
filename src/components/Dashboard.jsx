@@ -39,10 +39,10 @@ export default function Dashboard({ stats, onNavigate, onViewBill, storeName }) 
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-[#e0231c]/30 text-[10px] font-mono uppercase tracking-[0.2em] text-red-300">
               <span className="w-1.5 h-1.5 rounded-full bg-[#e0231c] animate-pulse"></span>
-              <span>Sanctuary Terminal Active // Asia/Kolkata</span>
+              <span>Store Terminal Active • Asia/Kolkata</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#dfe7e0] uppercase">
-              {storeName ? `Namaste, ${storeName}` : 'Store Command Sanctuary'}
+              {storeName || 'TechStore Terminal'}
             </h2>
             <p className="text-[#aab4ad] text-xs sm:text-sm max-w-xl leading-relaxed font-light">
               Real-time snapshot of daily counter transactions, stock health, and customer credit balance.
@@ -87,7 +87,7 @@ export default function Dashboard({ stats, onNavigate, onViewBill, storeName }) 
         <div className="kage-card p-5 transition-all duration-200 group">
           <div className="flex items-center justify-between mb-3">
             <span className="text-[10px] font-mono font-medium uppercase tracking-[0.2em] text-[#78837c]">
-              Inventory Vault
+              Products Catalog
             </span>
             <div className="p-2 rounded-xl bg-white/[0.05] text-[#dfe7e0] group-hover:scale-105 transition-transform border border-white/5">
               <Package className="w-4 h-4" />
@@ -150,7 +150,7 @@ export default function Dashboard({ stats, onNavigate, onViewBill, storeName }) 
         <div className="kage-card p-5 transition-all duration-200 group">
           <div className="flex items-center justify-between mb-3">
             <span className="text-[10px] font-mono font-medium uppercase tracking-[0.2em] text-[#78837c]">
-              Market Udhaar
+              Customer Udhaar
             </span>
             <div className="p-2 rounded-xl bg-white/[0.05] text-amber-400 group-hover:scale-105 transition-transform border border-white/5">
               <Users className="w-4 h-4" />
@@ -167,97 +167,7 @@ export default function Dashboard({ stats, onNavigate, onViewBill, storeName }) 
         </div>
       </div>
 
-      {/* Four Pavilion Action Cards */}
-      <div>
-        <div className="flex items-center justify-between mb-3.5">
-          <h3 className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#78837c]">
-            PAVILION ACCESS
-          </h3>
-          <span className="text-[10px] font-mono text-[#78837c]">Quick Switch</span>
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Button 1: Sanctuary Overview */}
-          <button
-            type="button"
-            onClick={() => onNavigate('dashboard')}
-            className="kage-card p-4 sm:p-5 text-left group active:scale-[0.99] flex items-center justify-between hover:border-[#e0231c]/50 transition-all"
-          >
-            <div className="flex items-center gap-3.5">
-              <div className="p-2.5 bg-white/[0.05] text-[#dfe7e0] group-hover:text-white group-hover:bg-[#e0231c] rounded-xl transition-colors">
-                <LayoutDashboard className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-xs uppercase tracking-wider text-[#dfe7e0] group-hover:text-white transition-colors">
-                  Overview
-                </h4>
-                <p className="text-[10px] text-[#78837c] font-mono mt-0.5">Live store metrics</p>
-              </div>
-            </div>
-            <ArrowRight className="w-4 h-4 text-[#78837c] group-hover:text-[#e0231c] group-hover:translate-x-1 transition-all" />
-          </button>
-
-          {/* Button 2: Products */}
-          <button
-            type="button"
-            onClick={() => onNavigate('products')}
-            className="kage-card p-4 sm:p-5 text-left group active:scale-[0.99] flex items-center justify-between hover:border-[#e0231c]/50 transition-all"
-          >
-            <div className="flex items-center gap-3.5">
-              <div className="p-2.5 bg-white/[0.05] text-[#dfe7e0] group-hover:text-white group-hover:bg-[#e0231c] rounded-xl transition-colors">
-                <Package className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-xs uppercase tracking-wider text-[#dfe7e0] group-hover:text-white transition-colors">
-                  Products
-                </h4>
-                <p className="text-[10px] text-[#78837c] font-mono mt-0.5">Stock & margins</p>
-              </div>
-            </div>
-            <ArrowRight className="w-4 h-4 text-[#78837c] group-hover:text-[#e0231c] group-hover:translate-x-1 transition-all" />
-          </button>
-
-          {/* Button 3: Billing Counter */}
-          <button
-            type="button"
-            onClick={() => onNavigate('billing')}
-            className="kage-card p-4 sm:p-5 text-left group active:scale-[0.99] flex items-center justify-between hover:border-[#e0231c]/50 transition-all"
-          >
-            <div className="flex items-center gap-3.5">
-              <div className="p-2.5 bg-white/[0.05] text-[#dfe7e0] group-hover:text-white group-hover:bg-[#e0231c] rounded-xl transition-colors">
-                <ShoppingCart className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-xs uppercase tracking-wider text-[#dfe7e0] group-hover:text-white transition-colors">
-                  Billing POS
-                </h4>
-                <p className="text-[10px] text-[#78837c] font-mono mt-0.5">Issue customer bill</p>
-              </div>
-            </div>
-            <ArrowRight className="w-4 h-4 text-[#78837c] group-hover:text-[#e0231c] group-hover:translate-x-1 transition-all" />
-          </button>
-
-          {/* Button 4: Customer Udhaar */}
-          <button
-            type="button"
-            onClick={() => onNavigate('udhaar')}
-            className="kage-card p-4 sm:p-5 text-left group active:scale-[0.99] flex items-center justify-between hover:border-[#e0231c]/50 transition-all"
-          >
-            <div className="flex items-center gap-3.5">
-              <div className="p-2.5 bg-white/[0.05] text-[#dfe7e0] group-hover:text-white group-hover:bg-[#e0231c] rounded-xl transition-colors">
-                <Users className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-xs uppercase tracking-wider text-[#dfe7e0] group-hover:text-white transition-colors">
-                  Udhaar Khata
-                </h4>
-                <p className="text-[10px] text-[#78837c] font-mono mt-0.5">Customer ledger</p>
-              </div>
-            </div>
-            <ArrowRight className="w-4 h-4 text-[#78837c] group-hover:text-[#e0231c] group-hover:translate-x-1 transition-all" />
-          </button>
-        </div>
-      </div>
 
       {/* Split Section: Recent Activity & Low-Stock Alerts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

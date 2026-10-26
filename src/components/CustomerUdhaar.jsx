@@ -151,7 +151,7 @@ export default function CustomerUdhaar({
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#dfe7e0] uppercase">
-              Ledger of Honor (Udhaar)
+              Customer Udhaar
             </h2>
             <span className="text-xs font-mono font-bold bg-white/[0.06] text-[#dfe7e0] px-2.5 py-0.5 rounded-full border border-white/10">
               {customers.length} Accounts

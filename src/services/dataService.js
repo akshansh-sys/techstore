@@ -138,6 +138,51 @@ export function deleteProduct(productId) {
   return true;
 }
 
+export function bulkSaveProducts(productsList) {
+  if (!Array.isArray(productsList) || productsList.length === 0) {
+    return [];
+  }
+  const products = getProducts();
+  const saved = [];
+  const now = new Date().toISOString();
+
+  for (const item of productsList) {
+    if (!item.name || !item.name.trim()) continue;
+
+    const purchasePrice = Math.max(0, parseFloat(item.purchasePrice) || 0);
+    const sellingPrice = Math.max(0, parseFloat(item.sellingPrice) || 0);
+    const quantity = Math.max(0, parseInt(item.quantity, 10) || 0);
+    const minStock = Math.max(0, parseInt(item.minStock, 10) || 5);
+
+    const cleanProduct = {
+      id: item.id || generateId('prod'),
+      name: item.name.trim(),
+      category: (item.category || 'General').trim(),
+      purchasePrice,
+      sellingPrice,
+      quantity,
+      minStock,
+      updatedAt: now,
+    };
+
+    // If product with matching ID or same name exists, update it
+    const existingIndex = products.findIndex(
+      (p) => (item.id && p.id === item.id) || p.name.trim().toLowerCase() === cleanProduct.name.toLowerCase()
+    );
+
+    if (existingIndex >= 0) {
+      cleanProduct.id = products[existingIndex].id;
+      products[existingIndex] = cleanProduct;
+    } else {
+      products.push(cleanProduct);
+    }
+    saved.push(cleanProduct);
+  }
+
+  writeStorage(STORAGE_KEYS.PRODUCTS, products);
+  return saved;
+}
+
 // ==========================================
 // 3. BILLING & SALES SERVICES
 // ==========================================

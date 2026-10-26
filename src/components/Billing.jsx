@@ -274,10 +274,10 @@ export default function Billing({
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#dfe7e0] uppercase">
-              Billing Counter (POS)
+              Billing Counter
             </h2>
             <span className="text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-red-950/50 text-red-300 border border-red-500/30">
-              Exchange Shrine
+              POS Ready
             </span>
           </div>
           <p className="text-xs text-[#78837c] font-mono mt-1">

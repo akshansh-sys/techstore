@@ -18,6 +18,7 @@ import {
   getProducts,
   saveProduct,
   deleteProduct,
+  bulkSaveProducts,
   createBill,
   getCustomers,
   saveCustomer,
@@ -116,6 +117,12 @@ export default function App() {
     refreshData();
   };
 
+  const handleBulkSaveProducts = (productsList) => {
+    const saved = bulkSaveProducts(productsList);
+    refreshData();
+    return saved;
+  };
+
   const handleDeleteProduct = (productId) => {
     deleteProduct(productId);
     refreshData();
@@ -160,7 +167,7 @@ export default function App() {
   const isValidSection = ['dashboard', 'products', 'billing', 'udhaar'].includes(activeSection);
 
   return (
-    <div className="min-h-screen bg-[#05070a] text-[#dfe7e0] relative selection:bg-[#e0231c] selection:text-white">
+    <div className="min-h-screen bg-[#05070a] text-[#dfe7e0] relative selection:bg-[#e0231c] selection:text-white overflow-x-hidden max-w-full">
       {/* 1. Authentic Kage Three.js 3D Background Layer */}
       <LandingPageFrame
         title="Kage 3D Temple Sanctuary"
@@ -182,7 +189,7 @@ export default function App() {
       <div className="kage-vignette" />
 
       {/* 3. Main Application Content (z-10) */}
-      <div className="relative z-10 min-h-screen flex flex-col">
+      <div className="relative z-10 min-h-screen flex flex-col w-full max-w-full overflow-x-hidden">
         {/* If user is not authenticated, show Kage Login & Registration Portal */}
         {!currentUser ? (
           <>
@@ -200,7 +207,7 @@ export default function App() {
               activeSection={activeSection}
             />
 
-            <div className="flex-1 flex max-w-7xl w-full mx-auto">
+            <div className="flex-1 flex max-w-7xl w-full mx-auto min-w-0">
               {/* Desktop Sidebar Navigation */}
               <Sidebar
                 activeSection={activeSection}
@@ -208,7 +215,7 @@ export default function App() {
               />
 
               {/* Main Content Area: Temple Pavilions */}
-              <main className="flex-1 p-3 sm:p-6 lg:p-8 pb-24 md:pb-8 max-w-full overflow-hidden">
+              <main className="flex-1 p-3 sm:p-6 lg:p-8 pb-24 md:pb-8 max-w-full min-w-0 overflow-x-hidden">
                 {activeSection === 'dashboard' && (
                   <Dashboard
                     stats={dashboardStats}
@@ -222,6 +229,7 @@ export default function App() {
                   <Products
                     products={products}
                     onSaveProduct={handleSaveProduct}
+                    onBulkSaveProducts={handleBulkSaveProducts}
                     onDeleteProduct={handleDeleteProduct}
                     showToast={showToast}
                   />
