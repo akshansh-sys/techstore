@@ -4698,7 +4698,25 @@ function frame(now) {
   queue();
 }
 const TIMER = qs('driver', 'raf') === 'timer';
-function queue() { TIMER ? setTimeout(() => frame(performance.now()), 16) : requestAnimationFrame(frame); }
+let _lastFrameTs = 0;
+function queue() {
+  const isBg = document.documentElement.getAttribute('data-threeui-presentation') === 'background';
+  if (isBg) {
+    // When used as background, throttle to ~30 FPS to reduce GPU/CPU load by >70%
+    requestAnimationFrame((ts) => {
+      if (ts - _lastFrameTs >= 32) {
+        _lastFrameTs = ts;
+        frame(ts);
+      } else {
+        queue();
+      }
+    });
+  } else if (TIMER) {
+    setTimeout(() => frame(performance.now()), 16);
+  } else {
+    requestAnimationFrame(frame);
+  }
+}
 
 /* ======================================================== 14 · booting */
 const JOBS = [

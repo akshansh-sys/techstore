@@ -31,6 +31,11 @@ import {
 import { getLocalUser, logoutUser } from './services/supabaseClient';
 
 export default function App() {
+  // Theme State ('dark' | 'light')
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('techstore_theme') || 'dark';
+  });
+
   // Authentication State
   const [currentUser, setCurrentUser] = useState(() => getLocalUser());
 
@@ -89,6 +94,16 @@ export default function App() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  // Sync theme with document attribute & storage
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('techstore_theme', theme);
+  }, [theme]);
+
+  const handleToggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   // Initial load on component mount
   useEffect(() => {
@@ -168,10 +183,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#05070a] text-[#dfe7e0] relative selection:bg-[#e0231c] selection:text-white overflow-x-hidden max-w-full">
-      {/* 1. Authentic Kage Three.js 3D Background Layer */}
+      {/* 1. Authentic Kage Three.js 3D Background Layer (Optimized for maximum speed) */}
       <LandingPageFrame
         title="Kage 3D Temple Sanctuary"
-        sourceUrl="/landing-pages/kage.html"
+        sourceUrl="/landing-pages/kage.html?q=low&dpr=1&shadow=0"
         backgroundCanvasSelector="#gl"
         backgroundVisualSelector="#vignette, #grain"
         style={{
@@ -181,7 +196,8 @@ export default function App() {
           height: '100vh',
           pointerEvents: 'none',
           zIndex: 0,
-          opacity: 0.68,
+          opacity: theme === 'dark' ? 0.68 : 0.22,
+          transition: 'opacity 0.4s ease',
         }}
       />
 
@@ -193,7 +209,11 @@ export default function App() {
         {/* If user is not authenticated, show Kage Login & Registration Portal */}
         {!currentUser ? (
           <>
-            <LoginPage onLoginSuccess={handleLoginSuccess} />
+            <LoginPage
+              onLoginSuccess={handleLoginSuccess}
+              theme={theme}
+              onToggleTheme={handleToggleTheme}
+            />
             <Toast toast={toast} onClose={() => setToast(null)} />
           </>
         ) : (
@@ -205,6 +225,8 @@ export default function App() {
               onLogout={handleLogout}
               onNavigate={(sec) => setActiveSection(sec)}
               activeSection={activeSection}
+              theme={theme}
+              onToggleTheme={handleToggleTheme}
             />
 
             <div className="flex-1 flex max-w-7xl w-full mx-auto min-w-0">

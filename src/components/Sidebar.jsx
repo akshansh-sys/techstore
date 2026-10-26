@@ -6,8 +6,6 @@ import {
   Users,
   Phone,
   Mail,
-  ShieldCheck,
-  ChevronRight,
 } from 'lucide-react';
 import { getShopProfile } from '../services/dataService';
 
@@ -96,17 +94,9 @@ export default function Sidebar({ activeSection, onSelectSection }) {
         </nav>
       </div>
 
-      {/* Support & Security Card */}
+      {/* Support Card */}
       <div className="p-3.5 m-3.5 border border-white/10 rounded-xl bg-black/40 text-xs text-[#aab4ad] space-y-2 backdrop-blur-sm shadow-inner">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 font-semibold text-[#dfe7e0] text-[11px] tracking-wide">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#c9a24a]" />
-            <span>Encrypted POS Terminal</span>
-          </div>
-          <span className="w-2 h-2 rounded-full bg-[#e0231c] animate-pulse" title="System Online"></span>
-        </div>
-
-        <div className="space-y-1.5 pt-2 border-t border-white/10 text-[11px]">
+        <div className="space-y-1.5 text-[11px]">
           {shop.phone && (
             <a
               href={`tel:${shop.phone.replace(/[\s-]/g, '')}`}

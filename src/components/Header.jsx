@@ -6,6 +6,8 @@ import {
   LogOut,
   Mail,
   Phone,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { getShopProfile } from '../services/dataService';
 
@@ -15,6 +17,8 @@ export default function Header({
   onLogout,
   onNavigate,
   activeSection = 'dashboard',
+  theme = 'dark',
+  onToggleTheme,
 }) {
   const shop = getShopProfile();
   const [timeString, setTimeString] = useState('');
@@ -108,6 +112,29 @@ export default function Header({
             <Clock className="w-3.5 h-3.5 text-[#78837c] shrink-0" />
             <span className="font-mono text-[11px] tracking-tight">{timeString || 'IST'}</span>
           </div>
+
+          {/* White / Dark Mode Toggle Button */}
+          {onToggleTheme && (
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              title={theme === 'dark' ? 'Switch to White Mode' : 'Switch to Dark Mode'}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-mono rounded-lg transition-all active:scale-95 shadow-sm border border-white/10 hover:border-white/20 bg-white/[0.04] hover:bg-white/[0.08]"
+              aria-label="Toggle white or dark theme"
+            >
+              {theme === 'dark' ? (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-[#c9a24a]" />
+                  <span className="hidden sm:inline text-[11px] text-[#dfe7e0]">White</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-indigo-600" />
+                  <span className="hidden sm:inline text-[11px] text-[#141a16] font-semibold">Dark</span>
+                </>
+              )}
+            </button>
+          )}
 
           {/* Reset / Clear Data Button */}
           <button

@@ -14,6 +14,8 @@ import {
   RotateCcw,
   Edit2,
   Sparkles,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import {
   loginWithEmail,
@@ -22,7 +24,7 @@ import {
   resendSignUpOtp,
 } from '../services/supabaseClient';
 
-export default function LoginPage({ onLoginSuccess }) {
+export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleTheme }) {
   // Mode: 'login' | 'register' | 'otp'
   const [authMode, setAuthMode] = useState('login');
 
@@ -124,7 +126,7 @@ export default function LoginPage({ onLoginSuccess }) {
     setLoading(true);
     try {
       await verifySignUpOtp(email, otpCode, shopName);
-      setSuccessMsg('Email verified successfully! Opening sanctuary dashboard...');
+      setSuccessMsg('Email verified successfully! Opening store dashboard...');
       setTimeout(() => {
         onLoginSuccess();
       }, 800);
@@ -154,6 +156,31 @@ export default function LoginPage({ onLoginSuccess }) {
 
   return (
     <div className="min-h-screen relative overflow-hidden flex flex-col justify-center items-center p-4 text-[#dfe7e0]">
+      {/* Top Right White / Dark Mode Toggle */}
+      {onToggleTheme && (
+        <div className="absolute top-4 right-4 z-20">
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            title={theme === 'dark' ? 'Switch to White Mode' : 'Switch to Dark Mode'}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-xl transition-all active:scale-95 shadow-md border border-white/10 hover:border-white/20 bg-black/40 hover:bg-black/60 backdrop-blur-md"
+            aria-label="Toggle white or dark theme"
+          >
+            {theme === 'dark' ? (
+              <>
+                <Sun className="w-3.5 h-3.5 text-[#c9a24a]" />
+                <span className="text-[11px] text-[#dfe7e0]">White</span>
+              </>
+            ) : (
+              <>
+                <Moon className="w-3.5 h-3.5 text-indigo-600" />
+                <span className="text-[11px] text-[#141a16] font-semibold">Dark</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
+
       {/* Ambient Lighting Glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-[#e0231c]/10 blur-3xl pointer-events-none rounded-full" />
 
@@ -167,7 +194,7 @@ export default function LoginPage({ onLoginSuccess }) {
             TechStore
           </h1>
           <p className="text-xs text-[#78837c] font-mono tracking-widest mt-1">
-            RETAIL & KIRANA SANCTUARY
+            RETAIL & KIRANA STORE TERMINAL
           </p>
         </div>
 
@@ -279,11 +306,11 @@ export default function LoginPage({ onLoginSuccess }) {
                 className="w-full py-3.5 px-4 btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-lg flex items-center justify-center gap-2 mt-2"
               >
                 {loading ? (
-                  <span>Entering Sanctuary...</span>
+                  <span>Entering Store...</span>
                 ) : (
                   <>
                     <LogIn className="w-4 h-4" />
-                    <span>Enter Sanctuary Dashboard</span>
+                    <span>Enter to the store</span>
                   </>
                 )}
               </button>
@@ -364,7 +391,7 @@ export default function LoginPage({ onLoginSuccess }) {
                 className="w-full py-3.5 px-4 btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-lg flex items-center justify-center gap-2 mt-2"
               >
                 {loading ? (
-                  <span>Creating Sanctuary...</span>
+                  <span>Creating Store Account...</span>
                 ) : (
                   <>
                     <UserPlus className="w-4 h-4" />
@@ -480,7 +507,7 @@ export default function LoginPage({ onLoginSuccess }) {
 
         {/* Clean Footer Note */}
         <p className="text-center text-[10px] font-mono text-[#78837c] tracking-widest uppercase mt-4">
-          TechStore • Retail & Kirana Store Management Sanctuary
+          TechStore • Retail & Kirana Store Management Terminal
         </p>
       </div>
     </div>

@@ -37,10 +37,6 @@ export default function Dashboard({ stats, onNavigate, onViewBill, storeName }) 
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-[#e0231c]/30 text-[10px] font-mono uppercase tracking-[0.2em] text-red-300">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#e0231c] animate-pulse"></span>
-              <span>Store Terminal Active • Asia/Kolkata</span>
-            </div>
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#dfe7e0] uppercase">
               {storeName || 'TechStore Terminal'}
             </h2>
