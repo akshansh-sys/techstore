@@ -921,3 +921,5 @@ export const SAMPLE_PRODUCTS_100 = [
     minStock: 6,
   },
 ];
+
+export const SAMPLE_PRODUCTS_50 = SAMPLE_PRODUCTS_100.slice(0, 50);

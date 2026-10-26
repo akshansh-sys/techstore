@@ -505,3 +505,51 @@ body,
 [data-theme="light"] ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8 !important;
 }
+
+/* High-Contrast Footer in Light Mode */
+[data-theme="light"] footer {
+  background-color: #ffffff !important;
+  border-top: 1.5px solid #cbd5e1 !important;
+  color: #334155 !important;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="light"] footer h4,
+[data-theme="light"] footer .text-\[\#dfe7e0\] {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] footer p,
+[data-theme="light"] footer .text-\[\#aab4ad\] {
+  color: #334155 !important;
+}
+
+[data-theme="light"] footer .text-\[\#78837c\] {
+  color: #475569 !important;
+}
+
+[data-theme="light"] footer button,
+[data-theme="light"] footer a {
+  color: #334155 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] footer button:hover,
+[data-theme="light"] footer a:hover {
+  color: #e0231c !important;
+}
+
+[data-theme="light"] footer .border-white\/10 {
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] footer .text-red-400 {
+  color: #dc2626 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] footer .text-\[\#c9a24a\] {
+  color: #9a3412 !important;
+}
+

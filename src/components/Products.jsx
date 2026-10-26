@@ -16,9 +16,11 @@ import {
   Copy,
   Check,
   FileUp,
+  Sparkles,
 } from 'lucide-react';
 import { formatRupees } from '../utils/formatters';
 import ConfirmModal from './ConfirmModal';
+import { SAMPLE_PRODUCTS_50 } from '../services/sampleCatalog';
 
 const sampleProductsCSV = `Product Name, Category, Purchase Price, Selling Price, Quantity, Min Stock
 USB-C Fast Cable 65W, Accessories, 90, 249, 45, 10
@@ -366,6 +368,26 @@ export default function Products({
     }
   };
 
+  // Load 50 Sample Products Option (At top of Products window only)
+  const handleLoadSampleData = () => {
+    try {
+      const now = Date.now();
+      const sample50 = SAMPLE_PRODUCTS_50.map((p, idx) => ({
+        name: p.name,
+        category: p.category,
+        purchasePrice: p.purchasePrice,
+        sellingPrice: p.sellingPrice,
+        quantity: p.quantity,
+        minStock: p.minStock,
+        id: `sample_${now}_${idx + 1}`,
+      }));
+      onBulkSaveProducts(sample50);
+      showToast('Successfully loaded 50 sample products into inventory!', 'success');
+    } catch (err) {
+      showToast('Error loading sample products', 'error');
+    }
+  };
+
   // Filter products by search query and category
   const filteredProducts = products.filter((p) => {
     const query = searchTerm.toLowerCase();
@@ -401,6 +423,17 @@ export default function Products({
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">
+          {/* Sample Data 50 Products Option (Only at top of Products window) */}
+          <button
+            type="button"
+            onClick={handleLoadSampleData}
+            className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 font-extrabold text-xs sm:text-sm uppercase tracking-wider rounded-xl shadow-md transition active:scale-95 shrink-0"
+            title="Load 50 sample products into inventory"
+          >
+            <Sparkles className="w-4 h-4 text-[#c9a24a]" />
+            <span>Load 50 Sample Products</span>
+          </button>
+
           <button
             type="button"
             onClick={handleOpenBulkModal}

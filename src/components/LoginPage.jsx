@@ -9,7 +9,6 @@ import {
   UserPlus,
   CheckCircle2,
   AlertCircle,
-  ShieldCheck,
   ArrowLeft,
   RotateCcw,
   Edit2,
@@ -17,18 +16,19 @@ import {
   Sun,
   Moon,
   Phone,
-  Zap,
+  ExternalLink,
+  Inbox,
+  ArrowRight,
 } from 'lucide-react';
 import {
   loginWithEmail,
   registerWithEmail,
-  verifySignUpOtp,
   resendSignUpOtp,
 } from '../services/supabaseClient';
 import { getShopProfile, saveShopProfile } from '../services/dataService';
 
 export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleTheme }) {
-  // Mode: 'login' | 'register' | 'otp'
+  // Mode: 'login' | 'register' | 'check-email'
   const [authMode, setAuthMode] = useState('login');
 
   // Form Fields
@@ -38,8 +38,7 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
   const [phone, setPhone] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  // Verification Code Fields
-  const [otpCode, setOtpCode] = useState('');
+  // Email Verification & Countdown
   const [resendTimer, setResendTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
 
@@ -51,7 +50,7 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
   // Resend Countdown Timer
   useEffect(() => {
     let interval = null;
-    if (authMode === 'otp' && resendTimer > 0) {
+    if (authMode === 'check-email' && resendTimer > 0) {
       interval = setInterval(() => {
         setResendTimer((prev) => prev - 1);
       }, 1000);
@@ -86,7 +85,7 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
     }
   };
 
-  // Handle Sign Up Submit
+  // Handle Sign Up Submit (Zero activation codes - prompts user to check email)
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
@@ -115,7 +114,7 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
 
       const result = await registerWithEmail(email, password, shopName, phone);
 
-      // If Supabase already authenticated the session (no OTP needed)
+      // If Supabase already authenticated the session (e.g. project has email confirmation disabled)
       if (result?.alreadyAuthenticated) {
         setSuccessMsg('Account registered successfully! Entering store...');
         setTimeout(() => {
@@ -124,85 +123,53 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
         return;
       }
 
-      // Always pre-fill instant activation code 123456 so user is never blocked by link-only emails
-      setOtpCode(result?.demoOtp || '123456');
-      setSuccessMsg(
-        result?.rateLimited
-          ? 'Email rate limit reached. Instant activation code 123456 is ready below!'
-          : `Account registered! If your email contains a confirmation link instead of an OTP, click that link or use the instant code 123456 below.`
-      );
-      setAuthMode('otp');
+      // Display the clean "go to email to verify" screen with zero activation code
+      setAuthMode('check-email');
       setResendTimer(30);
       setCanResend(false);
+      setSuccessMsg('Account created! A verification link has been sent to your email.');
     } catch (err) {
-      setErrorMsg(err.message || 'Failed to initiate account creation.');
+      setErrorMsg(err.message || 'Failed to create account.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Direct 1-Click Verification Handler
-  const handleDirectActivate = async (code = '123456') => {
+  // Direct login attempt after user clicks the link in their email
+  const handleCheckVerificationOrLogin = async () => {
     setErrorMsg('');
     setSuccessMsg('');
     setLoading(true);
     try {
-      await verifySignUpOtp(email, code, shopName, phone);
-      setSuccessMsg('Account activated successfully! Opening store dashboard...');
+      await loginWithEmail(email, password);
+      setSuccessMsg('Email verified! Opening store dashboard...');
       setTimeout(() => {
         onLoginSuccess();
-      }, 600);
+      }, 500);
     } catch (err) {
-      setErrorMsg(err.message || 'Activation failed. Please try again.');
+      const msg = err.message || '';
+      if (msg.toLowerCase().includes('confirm') || msg.toLowerCase().includes('verify')) {
+        setErrorMsg('Email not verified yet. Please open your inbox and click the verification link.');
+      } else {
+        setErrorMsg(msg || 'Could not sign in yet. Please click the link in your email first.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle Verify Code Submit
-  const handleVerifyOtpSubmit = async (e) => {
-    e.preventDefault();
-    setErrorMsg('');
-    setSuccessMsg('');
-
-    const codeToVerify = otpCode.trim() || '123456';
-    if (codeToVerify.length !== 6) {
-      setErrorMsg('Please enter the full 6-digit verification code.');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await verifySignUpOtp(email, codeToVerify, shopName, phone);
-      setSuccessMsg('Email verified successfully! Opening store dashboard...');
-      setTimeout(() => {
-        onLoginSuccess();
-      }, 700);
-    } catch (err) {
-      setErrorMsg(err.message || 'Invalid verification code. Please check and try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Resend Code
-  const handleResendOtp = async () => {
+  // Resend Verification Email
+  const handleResendEmail = async () => {
     if (!canResend || loading) return;
     setErrorMsg('');
     setLoading(true);
     try {
-      const res = await resendSignUpOtp(email);
-      if (res?.rateLimited) {
-        setSuccessMsg('Email rate limit reached. Use instant verification code: 123456');
-        setOtpCode('123456');
-      } else {
-        setSuccessMsg(`A new 6-digit code has been sent to ${email}!`);
-      }
+      await resendSignUpOtp(email);
+      setSuccessMsg(`A fresh verification link has been sent to ${email}!`);
       setResendTimer(30);
       setCanResend(false);
     } catch (err) {
-      setSuccessMsg('Email rate limit reached. Use instant verification code: 123456');
-      setOtpCode('123456');
+      setSuccessMsg(`A fresh verification link has been sent to ${email}!`);
       setResendTimer(30);
       setCanResend(false);
     } finally {
@@ -257,7 +224,7 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
         {/* Main Card */}
         <div className="kage-card p-6 sm:p-8 bg-[#0a0e12]/90 border border-white/15 shadow-[0_15px_60px_rgba(0,0,0,0.95)]">
           {/* Top Switcher: Owner Login vs Create Account */}
-          {authMode !== 'otp' && (
+          {authMode !== 'check-email' && (
             <div className="flex bg-black/60 p-1 rounded-xl mb-6 border border-white/10">
               <button
                 type="button"
@@ -477,110 +444,116 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
           )}
 
           {/* ==================================================== */}
-          {/* VIEW 3: VERIFICATION CODE SCREEN */}
+          {/* VIEW 3: OPTIMIZED CHECK EMAIL VERIFICATION SCREEN    */}
+          {/* (Zero activation codes - instructs user to verify)   */}
           {/* ==================================================== */}
-          {authMode === 'otp' && (
-            <div className="space-y-4 animate-fade-in">
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/[0.06] text-[#e0231c] mb-2 border border-white/10">
-                  <ShieldCheck className="w-6 h-6" />
+          {authMode === 'check-email' && (
+            <div className="space-y-4 animate-fade-in text-center">
+              {/* Mail Icon with Glowing Accent */}
+              <div className="relative inline-flex items-center justify-center mt-1">
+                <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-red-500/20 to-amber-500/10 border border-red-500/30 flex items-center justify-center shadow-lg shadow-red-950/40">
+                  <Inbox className="w-8 h-8 text-[#e0231c]" />
                 </div>
-                <h2 className="text-base font-bold uppercase tracking-wider text-[#dfe7e0]">Activate Your Account</h2>
-                <div className="flex items-center justify-center gap-1.5 mt-1">
-                  <span className="font-semibold text-[#dfe7e0] text-xs font-mono">{email}</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAuthMode('register');
-                      setErrorMsg('');
-                    }}
-                    title="Change email"
-                    className="text-red-400 hover:text-red-300 p-0.5"
-                  >
-                    <Edit2 className="w-3 h-3" />
-                  </button>
+                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center border-2 border-[#0a0e12] text-white">
+                  <Sparkles className="w-3 h-3" />
                 </div>
               </div>
 
-              {/* Helpful Gmail Notice */}
-              <div className="p-3 bg-blue-950/30 border border-blue-500/30 rounded-xl text-xs text-blue-200 text-left space-y-1">
-                <div className="font-bold flex items-center gap-1.5 text-blue-300">
-                  <Sparkles className="w-3.5 h-3.5 text-[#c9a24a]" />
-                  <span>Didn't receive an OTP code in Gmail?</span>
-                </div>
-                <p className="text-[11px] leading-relaxed text-[#aab4ad]">
-                  Supabase emails usually provide a <strong>confirmation link</strong> instead of a 6-digit code. You can tap the link in your email, or simply click <strong>Instant Activation</strong> below!
+              {/* Headline */}
+              <div>
+                <h2 className="text-lg font-bold uppercase tracking-wider text-[#dfe7e0]">
+                  Check Your Email to Verify
+                </h2>
+                <p className="text-xs text-[#78837c] font-mono mt-1">
+                  We've sent an activation link to your email:
                 </p>
               </div>
 
-              {/* 1-Click Instant Activation Button */}
-              <button
-                type="button"
-                onClick={() => handleDirectActivate('123456')}
-                disabled={loading}
-                className="w-full py-3 px-4 bg-emerald-950/40 hover:bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 font-mono text-xs font-bold uppercase tracking-wider rounded-xl transition active:scale-95 flex items-center justify-center gap-2 shadow-md"
-              >
-                <Zap className="w-4 h-4 text-emerald-400" />
-                <span>Instant Activate & Enter Store</span>
-              </button>
-
-              <div className="relative flex py-1 items-center">
-                <div className="flex-grow border-t border-white/10"></div>
-                <span className="flex-shrink mx-3 text-[10px] font-mono text-[#78837c] uppercase">Or enter code</span>
-                <div className="flex-grow border-t border-white/10"></div>
+              {/* Email Address Highlight Card with Edit Button */}
+              <div className="p-3 bg-black/60 border border-white/15 rounded-xl flex items-center justify-between gap-2 shadow-inner">
+                <div className="flex items-center gap-2 min-w-0 text-left">
+                  <Mail className="w-4 h-4 text-[#c9a24a] shrink-0" />
+                  <span className="font-mono text-xs font-semibold text-[#dfe7e0] truncate">
+                    {email}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode('register');
+                    setErrorMsg('');
+                    setSuccessMsg('');
+                  }}
+                  title="Edit email address"
+                  className="px-2 py-1 text-[11px] font-mono text-[#c9a24a] hover:text-white bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition shrink-0 flex items-center gap-1"
+                >
+                  <Edit2 className="w-3 h-3" />
+                  <span>Edit</span>
+                </button>
               </div>
 
-              {/* Verification Code Form */}
-              <form onSubmit={handleVerifyOtpSubmit} className="space-y-3.5">
-                <div>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={6}
-                    autoFocus
-                    required
-                    value={otpCode}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/\D/g, '').slice(0, 6);
-                      setOtpCode(val);
-                    }}
-                    placeholder="123456"
-                    className="w-full text-center text-2xl font-mono tracking-[0.4em] font-extrabold py-2.5 px-4 bg-black/60 border border-white/20 rounded-xl text-[#dfe7e0] focus:outline-none focus:border-[#e0231c] focus:ring-1 focus:ring-[#e0231c]/50"
-                  />
-                </div>
+              {/* Step-by-Step Guidance Box */}
+              <div className="p-3.5 bg-blue-950/20 border border-blue-500/30 rounded-xl text-left space-y-2">
+                <p className="text-[11px] font-mono uppercase tracking-wider text-blue-300 font-semibold flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
+                  <span>How to activate your account:</span>
+                </p>
+                <ol className="text-xs text-[#aab4ad] space-y-1.5 list-decimal list-inside leading-relaxed font-light">
+                  <li>
+                    Open your email inbox (also check <strong className="text-[#dfe7e0]">Spam / Junk</strong>).
+                  </li>
+                  <li>
+                    Click the <strong className="text-emerald-400">verification link</strong> in the email.
+                  </li>
+                  <li>
+                    Once clicked, return here and tap <strong className="text-[#dfe7e0]">Enter Store</strong> below!
+                  </li>
+                </ol>
+              </div>
 
-                {/* Submit Verification Button */}
-                <button
-                  type="submit"
-                  disabled={loading || otpCode.length !== 6}
-                  className="w-full py-3 px-4 btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-lg flex items-center justify-center gap-2"
-                >
-                  {loading ? (
-                    <span>Verifying Code...</span>
-                  ) : (
-                    <>
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>Verify & Continue</span>
-                    </>
-                  )}
-                </button>
-              </form>
+              {/* Primary Action 1: Open Gmail in New Tab */}
+              <a
+                href="https://mail.google.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3 px-4 bg-white/10 hover:bg-white/15 border border-white/20 text-[#dfe7e0] font-mono text-xs font-bold uppercase tracking-wider rounded-xl transition active:scale-95 flex items-center justify-center gap-2 shadow-sm"
+              >
+                <span>Open Gmail Inbox</span>
+                <ExternalLink className="w-3.5 h-3.5 text-[#c9a24a]" />
+              </a>
 
-              {/* Resend Code & Back to Sign In */}
-              <div className="flex flex-col items-center gap-3 pt-2 text-xs font-mono">
+              {/* Primary Action 2: I've Verified / Enter Store */}
+              <button
+                type="button"
+                onClick={handleCheckVerificationOrLogin}
+                disabled={loading}
+                className="w-full py-3.5 px-4 btn-vermilion disabled:opacity-40 disabled:cursor-not-allowed font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-lg flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <span>Checking verification status...</span>
+                ) : (
+                  <>
+                    <span>I've Clicked the Link — Enter Store</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+
+              {/* Resend Link & Back to Sign In Controls */}
+              <div className="pt-2 flex flex-col items-center gap-3 text-xs font-mono">
                 {canResend ? (
                   <button
                     type="button"
-                    onClick={handleResendOtp}
+                    onClick={handleResendEmail}
                     disabled={loading}
-                    className="inline-flex items-center gap-1 font-semibold text-red-400 hover:text-red-300"
+                    className="inline-flex items-center gap-1.5 font-semibold text-red-400 hover:text-red-300 transition"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Resend Code</span>
+                    <span>Resend verification email</span>
                   </button>
                 ) : (
                   <span className="text-[#78837c]">
-                    Resend code in <strong className="text-[#dfe7e0] font-mono">{resendTimer}s</strong>
+                    Resend link available in <strong className="text-[#dfe7e0] font-mono">{resendTimer}s</strong>
                   </span>
                 )}
 
@@ -591,7 +564,7 @@ export default function LoginPage({ onLoginSuccess, theme = 'dark', onToggleThem
                     setErrorMsg('');
                     setSuccessMsg('');
                   }}
-                  className="inline-flex items-center gap-1 text-[#78837c] hover:text-[#dfe7e0] pt-2"
+                  className="inline-flex items-center gap-1.5 text-[#78837c] hover:text-[#dfe7e0] pt-1 transition"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>Back to Sign In</span>
