@@ -714,27 +714,35 @@ body,
   }
 }
 
-@keyframes diwaliFlameFlicker {
-  0%, 100% {
-    transform: scaleY(1) scaleX(1) rotate(-1deg);
-    opacity: 0.95;
-    filter: drop-shadow(0 0 4px #ff9e00) drop-shadow(0 0 10px #ff5400);
-  }
-  25% {
-    transform: scaleY(1.12) scaleX(0.92) rotate(2deg);
-    opacity: 1;
-    filter: drop-shadow(0 0 6px #ffbe0b) drop-shadow(0 0 14px #fb5607);
+@keyframes textFlowShimmer {
+  0% {
+    background-position: 0% 50%;
   }
   50% {
-    transform: scaleY(0.92) scaleX(1.05) rotate(-2deg);
-    opacity: 0.9;
-    filter: drop-shadow(0 0 3px #ff9e00) drop-shadow(0 0 8px #d90429);
+    background-position: 100% 50%;
   }
-  75% {
-    transform: scaleY(1.08) scaleX(0.95) rotate(1deg);
-    opacity: 1;
-    filter: drop-shadow(0 0 7px #ffdd00) drop-shadow(0 0 12px #ff4800);
+  100% {
+    background-position: 0% 50%;
   }
+}
+
+.professional-flow-text {
+  background: linear-gradient(110deg, #dfe7e0 0%, #ffffff 20%, #ffd166 40%, #ff5a3c 55%, #ffd166 70%, #ffffff 85%, #dfe7e0 100%);
+  background-size: 250% 100%;
+  animation: textFlowShimmer 5s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  filter: drop-shadow(0 0 10px rgba(255, 209, 102, 0.35));
+}
+
+[data-theme="light"] .professional-flow-text {
+  background: linear-gradient(110deg, #0f172a 0%, #1e293b 20%, #b45309 40%, #e0231c 55%, #b45309 70%, #1e293b 85%, #0f172a 100%);
+  background-size: 250% 100%;
+  animation: textFlowShimmer 5s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 8px rgba(224, 35, 28, 0.25));
 }
 
 .diwali-lightning-text {
@@ -770,11 +778,6 @@ body,
 
 .diwali-bulb-c {
   animation: diwaliBulbBlinkC 3.2s ease-in-out infinite;
-}
-
-.diwali-flame {
-  animation: diwaliFlameFlicker 1.8s ease-in-out infinite;
-  transform-origin: bottom center;
 }
 
 

@@ -14,7 +14,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { formatRupees, formatDateTime } from '../utils/formatters';
-import { DiwaliDiya, DiwaliBulbBorder } from './DiwaliDecorations';
+import { DiwaliBulbBorder } from './DiwaliDecorations';
 
 export default function Dashboard({ stats, onNavigate, onViewBill, storeName }) {
   const {
@@ -39,16 +39,19 @@ export default function Dashboard({ stats, onNavigate, onViewBill, storeName }) 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <DiwaliBulbBorder variant="banner" className="inline-block max-w-full">
-              <div className="p-3.5 sm:p-5 flex items-center gap-3 sm:gap-4">
-                <DiwaliDiya className="w-8 h-8 sm:w-11 sm:h-11 shrink-0 filter drop-shadow-[0_0_10px_rgba(255,183,3,0.9)]" />
+              <div className="p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-br from-[#e0231c]/25 to-amber-500/20 border border-amber-400/30 text-amber-300 flex items-center justify-center shrink-0 shadow-inner">
+                  <Store className="w-6 h-6 sm:w-8 sm:h-8 text-amber-300" />
+                </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                     <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight uppercase diwali-lightning-text">
                       {storeName || 'TechStore Terminal'}
                     </h2>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold uppercase tracking-widest bg-amber-500/20 text-amber-300 border border-amber-400/40 shadow-sm animate-pulse flex items-center gap-1">
-                      <span>🪔</span>
-                      <span>Shubh Deepavali</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold uppercase tracking-widest bg-amber-500/20 text-amber-300 border border-amber-400/40 shadow-sm flex items-center gap-1">
+                      <span>✨</span>
+                      <span>Diwali Celebration</span>
+                      <span>✨</span>
                     </span>
                   </div>
                   <p className="text-[#aab4ad] text-xs sm:text-sm mt-1 leading-relaxed font-normal">
