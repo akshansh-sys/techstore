@@ -8,6 +8,7 @@ import {
   Moon,
 } from 'lucide-react';
 import { getShopProfile } from '../services/dataService';
+import { DiwaliDiya, DiwaliBulbBorder } from './DiwaliDecorations';
 
 export default function Header({
   onClearData,
@@ -52,25 +53,47 @@ export default function Header({
   return (
     <header className="no-print bg-[#05070a]/90 backdrop-blur-md border-b border-[rgba(223,231,224,0.1)] sticky top-0 z-30 transition-all w-full overflow-hidden">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between gap-2 sm:gap-4 min-w-0">
-        {/* Left: Store Brand & Logo (Clickable to Dashboard) */}
+        {/* Left: Store Brand with Diwali Lightning & Blinking Bulbs Border */}
         <button
           type="button"
           onClick={() => onNavigate && onNavigate('dashboard')}
-          className="flex items-center gap-2.5 sm:gap-3 text-left focus:outline-none group rounded-xl p-1 -ml-1 transition hover:bg-white/[0.04] active:scale-[0.99] min-w-0 shrink"
+          className="text-left focus:outline-none group rounded-2xl transition active:scale-[0.99] min-w-0 shrink my-1"
           title="Go to Dashboard Overview"
         >
-          {/* Vermilion Shrine Seal Mark */}
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#e0231c] to-[#99140e] flex items-center justify-center text-white shadow-lg shadow-red-950/50 border border-[#ff5a3c]/30 group-hover:scale-105 transition-transform duration-300 shrink-0">
-            <Store className="w-4 h-4 sm:w-5 sm:h-5" />
-          </div>
-          <div className="min-w-0">
-            <h1 className="text-sm sm:text-base font-extrabold text-[#dfe7e0] tracking-wider uppercase leading-tight truncate max-w-[120px] xs:max-w-[170px] sm:max-w-xs">
-              {storeDisplayName}
-            </h1>
-            <p className="text-[10px] text-[#78837c] font-mono tracking-widest hidden sm:block truncate max-w-xs mt-0.5">
-              {shop.tagline || 'RETAIL POS TERMINAL'}
-            </p>
-          </div>
+          <DiwaliBulbBorder variant="header">
+            <div className="flex items-center gap-2 sm:gap-2.5 px-2.5 sm:px-3 py-1.5 sm:py-2">
+              {/* Store Icon with Decorative Diya */}
+              <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-[#e0231c] via-[#b81610] to-[#780000] flex items-center justify-center text-white shadow-md shadow-red-950/60 border border-amber-400/40 group-hover:scale-105 transition-transform duration-300 shrink-0">
+                <Store className="w-4 h-4 text-amber-200" />
+                {/* Floating Diya at corner */}
+                <div className="absolute -top-1.5 -right-1.5 filter drop-shadow-[0_0_4px_rgba(255,183,3,0.9)]">
+                  <DiwaliDiya className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+                </div>
+              </div>
+
+              {/* Store Name with Diwali Lightning Glow */}
+              <div className="min-w-0 pr-1">
+                <div className="flex items-center gap-1.5">
+                  <h1 className="text-xs sm:text-sm md:text-base font-black tracking-wider uppercase leading-tight truncate max-w-[110px] xs:max-w-[150px] sm:max-w-xs diwali-lightning-text">
+                    {storeDisplayName}
+                  </h1>
+                  <span className="text-xs shrink-0 select-none" title="Happy Diwali">🪔</span>
+                </div>
+
+                {/* Tagline + Shubh Diwali Banner */}
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="text-[9px] sm:text-[10px] font-mono font-bold tracking-wider text-amber-400 uppercase flex items-center gap-0.5">
+                    <span>✨</span>
+                    <span>DIWALI</span>
+                    <span>✨</span>
+                  </span>
+                  <p className="text-[10px] text-[#78837c] font-mono tracking-widest hidden sm:block truncate max-w-xs">
+                    • {shop.tagline || 'RETAIL POS TERMINAL'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </DiwaliBulbBorder>
         </button>
 
         {/* Right: Theme Toggle, Clock, Reset & Logout Buttons */}
