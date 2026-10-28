@@ -15,7 +15,6 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { formatRupees, formatDateTime } from '../utils/formatters';
-import { DiwaliBulbBorder } from './DiwaliDecorations';
 
 export default function Dashboard({ stats, onNavigate, onViewBill, storeName }) {
   const {
@@ -38,29 +37,18 @@ export default function Dashboard({ stats, onNavigate, onViewBill, storeName }) 
         <div className="absolute -left-10 -bottom-10 w-64 h-64 bg-[#c9a24a]/10 rounded-full blur-2xl pointer-events-none"></div>
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <DiwaliBulbBorder variant="banner" className="inline-block max-w-full">
-              <div className="p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
-                <div className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-br from-[#e0231c]/25 to-amber-500/20 border border-amber-400/30 text-amber-300 flex items-center justify-center shrink-0 shadow-inner">
-                  <Store className="w-6 h-6 sm:w-8 sm:h-8 text-amber-300" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight uppercase diwali-lightning-text">
-                      {storeName || 'TechStore Terminal'}
-                    </h2>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold uppercase tracking-widest bg-amber-500/20 text-amber-300 border border-amber-400/40 shadow-sm flex items-center gap-1">
-                      <span>✨</span>
-                      <span>Diwali Celebration</span>
-                      <span>✨</span>
-                    </span>
-                  </div>
-                  <p className="text-[#aab4ad] text-xs sm:text-sm mt-1 leading-relaxed font-normal">
-                    Real-time snapshot of daily counter transactions, stock health, and customer credit balance.
-                  </p>
-                </div>
+          <div className="space-y-2 max-w-2xl">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-[#e0231c] via-[#b81610] to-[#780000] flex items-center justify-center text-white shadow-lg shadow-red-950/50 border border-[#ff5a3c]/30 shrink-0">
+                <Store className="w-5 h-5 sm:w-6 sm:h-6 text-amber-100" />
               </div>
-            </DiwaliBulbBorder>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight uppercase leading-tight professional-flow-text">
+                {storeName || 'TechStore Terminal'}
+              </h2>
+            </div>
+            <p className="text-[#aab4ad] text-sm sm:text-base leading-relaxed font-normal pt-1">
+              Real-time snapshot of daily counter transactions, stock health, and customer credit balance.
+            </p>
           </div>
 
           <button
